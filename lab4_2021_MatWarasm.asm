@@ -50,12 +50,7 @@ START
     movlw   0x01	; Value used to initialize data direction
     movwf   TRISC	; Set RC0 as input
     
-    ;enable timer0 interrupts
-    movlw   b'10100000'	;enables timer0 interrupts
-    movwf   INTCON
-    movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
-    movwf   T0CON
-    bsf	    INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
+    
 
     bcf     UCON,3	; to be sure to disable USB module
     bsf     UCFG,3	; disable internal USB transceiver
@@ -63,6 +58,7 @@ START
     goto main		;goto main and start the code
 
 main
+    call init_tmr0
     goto    loop
     ;call    init_lut
 
@@ -71,6 +67,16 @@ init_dac
     
     bsf	    INTCON,GIE 
     return
+    
+init_tmr0
+    ;enable timer0 interrupts
+    movlw   b'10100000'	;enables timer0 interrupts
+    movwf   INTCON
+    movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
+    movwf   T0CON
+    bsf	    INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
+    return   
+    
 loop
     goto    loop
 

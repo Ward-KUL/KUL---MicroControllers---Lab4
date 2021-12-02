@@ -1,4 +1,4 @@
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  15:55:51         PAGE  1
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  16:02:47         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -67,108 +67,114 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001042 0E01           00050     movlw   0x01        ; Value used to initialize data direction
 001044 6E94           00051     movwf   TRISC       ; Set RC0 as input
                       00052     
-                      00053     ;enable timer0 interrupts
-001046 0EA0           00054     movlw   b'10100000' ;enables timer0 interrupts
-001048 6EF2           00055     movwf   INTCON
-00104A 0E85           00056     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
-00104C 6ED5           00057     movwf   T0CON
-00104E 84F1           00058     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
+                      00053     
+                      00054 
+001046 9660           00055     bcf     UCON,3      ; to be sure to disable USB module
+001048 8662           00056     bsf     UCFG,3      ; disable internal USB transceiver
+                      00057     
+00104A EF?? F???      00058     goto main           ;goto main and start the code
                       00059 
-001050 9660           00060     bcf     UCON,3      ; to be sure to disable USB module
-001052 8662           00061     bsf     UCFG,3      ; disable internal USB transceiver
-                      00062     
-001054 EF?? F???      00063     goto main           ;goto main and start the code
+00104E                00060 main
+00104E EC?? F???      00061     call init_tmr0
+001052 EF?? F???      00062     goto    loop
+                      00063     ;call    init_lut
                       00064 
-001058                00065 main
-001058 EF?? F???      00066     goto    loop
-                      00067     ;call    init_lut
-                      00068 
-00105C                00069 init_dac    
-                      00070     ;complete me
-                      00071     
-00105C 8EF2           00072     bsf     INTCON,GIE 
-00105E 0012           00073     return
-001060                00074 loop
-001060 EF?? F???      00075     goto    loop
-                      00076 
-                      00077 ;***********************************************************
-                      00078 ; subroutines
-                      00079 ;***********************************************************
-001064                00080 init_lut
-                      00081     ; FSR1: will go though table of sine samples; starts at address 0x010
-001064 EE10 F010      00082     lfsr    1, 0x010
-001068 0E0F           00083     movlw   D'15'       
-00106A 6E10           00084     movwf   0x10
-00106C 0E15           00085     movlw   D'21'       
-00106E 6E11           00086     movwf   0x11
-001070 0E1A           00087     movlw   D'26'       
-001072 6E12           00088     movwf   0x12
-001074 0E1D           00089     movlw   D'29'       
-001076 6E13           00090     movwf   0x13
-001078 0E1E           00091     movlw   D'30'       
-00107A 6E14           00092     movwf   0x14
-00107C 0E1D           00093     movlw   D'29'       
-00107E 6E15           00094     movwf   0x15
-001080 0E1A           00095     movlw   D'26'       
-001082 6E16           00096     movwf   0x16
-001084 0E15           00097     movlw   D'21'       
-001086 6E17           00098     movwf   0x17
-001088 0E0F           00099     movlw   D'15'       
-00108A 6E18           00100     movwf   0x18
-00108C 0E09           00101     movlw   D'9'        
-00108E 6E19           00102     movwf   0x19
-001090 0E04           00103     movlw   D'4'        
-001092 6E1A           00104     movwf   0x1A
-001094 0E01           00105     movlw   D'1'        
-001096 6E1B           00106     movwf   0x1B
-001098 0E00           00107     movlw   D'0'        
-00109A 6E1C           00108     movwf   0x1C
-00109C 0E01           00109     movlw   D'1'        
-00109E 6E1D           00110     movwf   0x1D
-0010A0 0E04           00111     movlw   D'4'        
-0010A2 6E1E           00112     movwf   0x1E
-0010A4 0E09           00113     movlw   D'9'        
-0010A6 6E1F           00114     movwf   0x1F
-                      00115     
-                      00116     ; FSR0: song
-                      00117     ;complete me
-                      00118     
-0010A8 0012           00119     return
-                      00120     
-                      00121 ;***********************************************************
-                      00122 ; interrupt handling
-                      00123 ;***********************************************************
-                      00124 
-0010AA                00125 inter_high
-0010AA B4F2           00126     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
-0010AC EC?? F???      00127     call ih_tmr0
-0010B0 0010           00128     retfie
-                      00129     
+001056                00065 init_dac    
+                      00066     ;complete me
+                      00067     
+001056 8EF2           00068     bsf     INTCON,GIE 
+001058 0012           00069     return
+                      00070     
+00105A                00071 init_tmr0
+                      00072     ;enable timer0 interrupts
+00105A 0EA0           00073     movlw   b'10100000' ;enables timer0 interrupts
+00105C 6EF2           00074     movwf   INTCON
+00105E 0E85           00075     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
+001060 6ED5           00076     movwf   T0CON
+001062 84F1           00077     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
+001064 0012           00078     return   
+                      00079     
+001066                00080 loop
+001066 EF?? F???      00081     goto    loop
+                      00082 
+                      00083 ;***********************************************************
+                      00084 ; subroutines
+                      00085 ;***********************************************************
+00106A                00086 init_lut
+                      00087     ; FSR1: will go though table of sine samples; starts at address 0x010
+00106A EE10 F010      00088     lfsr    1, 0x010
+00106E 0E0F           00089     movlw   D'15'       
+001070 6E10           00090     movwf   0x10
+001072 0E15           00091     movlw   D'21'       
+001074 6E11           00092     movwf   0x11
+001076 0E1A           00093     movlw   D'26'       
+001078 6E12           00094     movwf   0x12
+00107A 0E1D           00095     movlw   D'29'       
+00107C 6E13           00096     movwf   0x13
+00107E 0E1E           00097     movlw   D'30'       
+001080 6E14           00098     movwf   0x14
+001082 0E1D           00099     movlw   D'29'       
+001084 6E15           00100     movwf   0x15
+001086 0E1A           00101     movlw   D'26'       
+001088 6E16           00102     movwf   0x16
+00108A 0E15           00103     movlw   D'21'       
+00108C 6E17           00104     movwf   0x17
+00108E 0E0F           00105     movlw   D'15'       
+001090 6E18           00106     movwf   0x18
+001092 0E09           00107     movlw   D'9'        
+001094 6E19           00108     movwf   0x19
+001096 0E04           00109     movlw   D'4'        
+001098 6E1A           00110     movwf   0x1A
+00109A 0E01           00111     movlw   D'1'        
+00109C 6E1B           00112     movwf   0x1B
+00109E 0E00           00113     movlw   D'0'        
+0010A0 6E1C           00114     movwf   0x1C
+0010A2 0E01           00115     movlw   D'1'        
+0010A4 6E1D           00116     movwf   0x1D
+0010A6 0E04           00117     movlw   D'4'        
+0010A8 6E1E           00118     movwf   0x1E
+0010AA 0E09           00119     movlw   D'9'        
+0010AC 6E1F           00120     movwf   0x1F
+                      00121     
+                      00122     ; FSR0: song
+                      00123     ;complete me
+                      00124     
+0010AE 0012           00125     return
+                      00126     
+                      00127 ;***********************************************************
+                      00128 ; interrupt handling
+                      00129 ;***********************************************************
                       00130 
-0010B2                00131 ih_tmr1
-                      00132     
-0010B2 0012           00133     return
-                      00134 
-0010B4                00135 ih_tmr0
-0010B4 728B           00136     btg     LATC,1; toggle RC1 led
-0010B6 94F2           00137     bcf     INTCON,2;clear the flag bit
-0010B8 0012           00138     return
-                      00139     
-0010BA                00140 inter_low
-0010BA 0000           00141     nop
-0010BC 0010           00142     retfie
-                      00143 ;***********************************************************
-                      00144 ; table
-                      00145 ;***********************************************************
-                      00146     
-0010BE                00147 NOTES ;TMR1H TM1L
-0010BE 0000           00148     DB 0x00, 0x00   ;Silence?
-                      00149     ;calculate the correct values
-0010C0 EEFF           00150     DB 0xFF, 0xEE   ;C = do
-                      00151     ;...
+0010B0                00131 inter_high
+0010B0 B4F2           00132     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
+0010B2 EC?? F???      00133     call ih_tmr0
+0010B6 0010           00134     retfie
+                      00135     
+                      00136 
+0010B8                00137 ih_tmr1
+                      00138     
+0010B8 0012           00139     return
+                      00140 
+0010BA                00141 ih_tmr0
+0010BA 728B           00142     btg     LATC,1; toggle RC1 led
+0010BC 94F2           00143     bcf     INTCON,2;clear the flag bit
+0010BE 0012           00144     return
+                      00145     
+0010C0                00146 inter_low
+0010C0 0000           00147     nop
+0010C2 0010           00148     retfie
+                      00149 ;***********************************************************
+                      00150 ; table
+                      00151 ;***********************************************************
                       00152     
-                      00153     END
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  15:55:51         PAGE  2
+0010C4                00153 NOTES ;TMR1H TM1L
+0010C4 0000           00154     DB 0x00, 0x00   ;Silence?
+                      00155     ;calculate the correct values
+0010C6 EEFF           00156     DB 0xFF, 0xEE   ;C = do
+                      00157     ;...
+                      00158     
+                      00159     END
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  16:02:47         PAGE  2
 
 
 SYMBOL TABLE
@@ -598,7 +604,7 @@ MC2OUT                            00000006
 MSSP1MD                           00000006
 MSSPMD                            00000006
 N                                 00000004
-NOTES                             000010BE
+NOTES                             000010C4
 NOT_BOR                           00000000
 NOT_DONE                          00000001
 NOT_PD                            00000002
@@ -1249,14 +1255,15 @@ _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
-ih_tmr0                           000010B4
-ih_tmr1                           000010B2
-init_dac                          0000105C
-init_lut                          00001064
-inter_high                        000010AA
-inter_low                         000010BA
-loop                              00001060
-main                              00001058
+ih_tmr0                           000010BA
+ih_tmr1                           000010B8
+init_dac                          00001056
+init_lut                          0000106A
+init_tmr0                         0000105A
+inter_high                        000010B0
+inter_low                         000010C0
+loop                              00001066
+main                              0000104E
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
