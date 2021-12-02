@@ -24,6 +24,9 @@
     GOTO    inter_low	; When debugging:0x0008; when loading: 0x1018
 
 ;***********************************************************
+    ;File register
+;DAVAL equ 0x20; variable to store digital analog conversion
+;***********************************************************
 ; Program Code Starts Here
 ;***********************************************************
 
@@ -37,10 +40,11 @@ START
     movlw   0x10	; load value 0x10 to work register
     movwf   OSCCON2		
     clrf    LATA 	; Initialize PORTA by clearing output data latches
-    movlw   0xFF 	; Value used to initialize data direction
+    movlw   0x00 	; Value used to initialize data direction, only RA2 moet als output worden gebruikt used to be 0xFF
     movwf   TRISA 	; Set PORTA as output
-    movlw   0x00 	; Configure A/D for digital inputs 0000 1111
+    movlw   b'00000100' 	; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be analog (used to be 0x00)
     movwf   ANSELA	
+    clrf    LATA	; clear A output latch
     movlw   0x00	; Configure comparators for digital input
     movwf   CM1CON0
     clrf    LATB	; Initialize PORTB by clearing output data latches
@@ -58,24 +62,35 @@ START
     goto main		;goto main and start the code
 
 main
-    call init_tmr0
+    call    init_tmr0
+    call    init_tmr1
+    call    init_dac
     goto    loop
     ;call    init_lut
 
 init_dac    
-    ;complete me
-    
+    movlw   b'11100000'; enable DAC, DACOUT is RA2
+    movwf   VREFCON1 
     bsf	    INTCON,GIE 
     return
     
 init_tmr0
     ;enable timer0 interrupts
-    movlw   b'10100000'	;enables timer0 interrupts
+    movlw   b'11100000'	;enables timer0 interrupts
     movwf   INTCON
     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
     movwf   T0CON
+    return
+    
+init_tmr1
+    ;we willen dat de tmr1 met een frequentie van 62.5 interrupt -> op elke trigger nieuwe DA waarde nemen
+    movlw    b'00100111';stel de waardes van de timer1 in
+    movwf   T1CON
     bsf	    INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
-    return   
+    bsf	    PIE1,0; enable tmr1 interrupt
+    bsf	    PIE1,0; enable tmr2 interrupt(just to be sure)
+    return
+    
     
 loop
     goto    loop
@@ -131,11 +146,19 @@ init_lut
 inter_high
     btfsc   INTCON,2	;will be high if timer0 has given interrupt
     call ih_tmr0
+    btfsc   PIR1,0  ;will be high when tmr1 has given an interrupt
+    call ih_tmr1
     retfie
     
 
 ih_tmr1
+    ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
+    ;haal de gewenste waarde op
     
+    
+    ;schrijf de gewenste waarde in de VREFCON2
+    movlw   0xFF;
+    movwf   VREFCON2
     return
 
 ih_tmr0
