@@ -1,4 +1,4 @@
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  15:39:58         PAGE  1
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  15:55:51         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -68,9 +68,9 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001044 6E94           00051     movwf   TRISC       ; Set RC0 as input
                       00052     
                       00053     ;enable timer0 interrupts
-001046 0E20           00054     movlw   b'00100000' ;enables timer0 interrupts
+001046 0EA0           00054     movlw   b'10100000' ;enables timer0 interrupts
 001048 6EF2           00055     movwf   INTCON
-00104A 0E86           00056     movlw   b'10000110';timer 0 geeft een interrupt met een frequentie van 0.7Hz
+00104A 0E85           00056     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
 00104C 6ED5           00057     movwf   T0CON
 00104E 84F1           00058     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
                       00059 
@@ -140,36 +140,35 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00123 ;***********************************************************
                       00124 
 0010AA                00125 inter_high
-0010AA C0FF FF8B      00126     movff   0xFF,LATC
-0010AE B4F2           00127     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
-0010B0 EC?? F???      00128     call ih_tmr0
-0010B4 0010           00129     retfie
-                      00130     
-                      00131 
-0010B6                00132 ih_tmr1
-                      00133     
-0010B6 0012           00134     return
-                      00135 
-0010B8                00136 ih_tmr0
-0010B8 728B           00137     btg     LATC,1; toggle RC1 led
-0010BA 94F2           00138     bcf     INTCON,2;clear the flag bit
-0010BC 0012           00139     return
-                      00140     
-0010BE                00141 inter_low
-0010BE 0000           00142     nop
-0010C0 0010           00143     retfie
-                      00144 ;***********************************************************
-                      00145 ; table
-                      00146 ;***********************************************************
-                      00147     
-0010C2                00148 NOTES ;TMR1H TM1L
-0010C2 0000           00149     DB 0x00, 0x00   ;Silence?
-                      00150     ;calculate the correct values
-0010C4 EEFF           00151     DB 0xFF, 0xEE   ;C = do
-                      00152     ;...
-                      00153     
-                      00154     END
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  15:39:58         PAGE  2
+0010AA B4F2           00126     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
+0010AC EC?? F???      00127     call ih_tmr0
+0010B0 0010           00128     retfie
+                      00129     
+                      00130 
+0010B2                00131 ih_tmr1
+                      00132     
+0010B2 0012           00133     return
+                      00134 
+0010B4                00135 ih_tmr0
+0010B4 728B           00136     btg     LATC,1; toggle RC1 led
+0010B6 94F2           00137     bcf     INTCON,2;clear the flag bit
+0010B8 0012           00138     return
+                      00139     
+0010BA                00140 inter_low
+0010BA 0000           00141     nop
+0010BC 0010           00142     retfie
+                      00143 ;***********************************************************
+                      00144 ; table
+                      00145 ;***********************************************************
+                      00146     
+0010BE                00147 NOTES ;TMR1H TM1L
+0010BE 0000           00148     DB 0x00, 0x00   ;Silence?
+                      00149     ;calculate the correct values
+0010C0 EEFF           00150     DB 0xFF, 0xEE   ;C = do
+                      00151     ;...
+                      00152     
+                      00153     END
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  15:55:51         PAGE  2
 
 
 SYMBOL TABLE
@@ -599,7 +598,7 @@ MC2OUT                            00000006
 MSSP1MD                           00000006
 MSSPMD                            00000006
 N                                 00000004
-NOTES                             000010C2
+NOTES                             000010BE
 NOT_BOR                           00000000
 NOT_DONE                          00000001
 NOT_PD                            00000002
@@ -1250,12 +1249,12 @@ _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
-ih_tmr0                           000010B8
-ih_tmr1                           000010B6
+ih_tmr0                           000010B4
+ih_tmr1                           000010B2
 init_dac                          0000105C
 init_lut                          00001064
 inter_high                        000010AA
-inter_low                         000010BE
+inter_low                         000010BA
 loop                              00001060
 main                              00001058
 

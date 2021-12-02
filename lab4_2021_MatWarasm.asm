@@ -51,9 +51,9 @@ START
     movwf   TRISC	; Set RC0 as input
     
     ;enable timer0 interrupts
-    movlw   b'00100000'	;enables timer0 interrupts
+    movlw   b'10100000'	;enables timer0 interrupts
     movwf   INTCON
-    movlw   b'10000110';timer 0 geeft een interrupt met een frequentie van 0.7Hz
+    movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
     movwf   T0CON
     bsf	    INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
 
@@ -123,7 +123,6 @@ init_lut
 ;***********************************************************
 
 inter_high
-    movff   0xFF,LATC
     btfsc   INTCON,2	;will be high if timer0 has given interrupt
     call ih_tmr0
     retfie
