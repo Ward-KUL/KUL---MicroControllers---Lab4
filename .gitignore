@@ -1,0 +1,13 @@
+
+*.err
+*.lst
+*.o
+*.d
+*.cof
+*.hex
+*.map
+Makefile
+*.xml
+*.mk
+*.properties
+*.bash
