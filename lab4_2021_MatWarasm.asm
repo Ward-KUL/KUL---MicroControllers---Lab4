@@ -5,7 +5,7 @@
     #include <p18f25k50.inc>	; file to provide register definitions for the specific processor (a lot of equ)
 
 ; File registers
-
+TESTVAR	equ 0x01;variabele om testresultaat in te steken
 ;***********************************************************
 ; Reset Vector
 ;***********************************************************
@@ -73,6 +73,7 @@ init_dac
     movlw   b'11100000'; enable DAC, DACOUT is RA2
     movwf   VREFCON1 
     bsf	    INTCON,GIE 
+    setf    TESTVAR,0;set the testvar variable high cus it'll trigger on 0
     return
     
 init_tmr0
@@ -151,15 +152,22 @@ inter_high
     call ih_tmr1
     retfie
     
-
+reset_sin_wave
+    lfsr    1, 0x010
+    goto    schrijf_op_dac
+schrijf_op_dac
+    movf    POSTINC1,0; zet de waarde van de de sfr1 pointer in de work register en increment hem
+    movwf   VREFCON2;start de dac met de waarde uit de pointer
+    return
 ih_tmr1
     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
     ;haal de gewenste waarde op
-    movf    INDF0;zet het adress waar de pointer naar wijst in de working register
-    
-    movf    PREINC1; zet de waarde van de de sfr1 pointer in de work register en increment hem
-    
-    movwf   VREFCON2;start de dac met de waarde uit de pointer
+    movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
+    xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
+    movwf   TESTVAR
+    tstfsz  TESTVAR;als 0, de volgende instructie discarded
+    goto    schrijf_op_dac
+    goto    reset_sin_wave;zet de sinus terug naar 0
     return
 
 ih_tmr0
