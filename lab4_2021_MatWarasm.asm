@@ -42,8 +42,8 @@ START
     clrf    LATA 	; Initialize PORTA by clearing output data latches
     movlw   0x00 	; Value used to initialize data direction, only RA2 moet als output worden gebruikt used to be 0xFF
     movwf   TRISA 	; Set PORTA as output
-    movlw   b'00000100' 	; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be analog (used to be 0x00)
-    movwf   ANSELA	
+    ;movlw   b'00000100' 	; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be analog (used to be 0x00)
+    ;movwf   ANSELA	
     clrf    LATA	; clear A output latch
     movlw   0x00	; Configure comparators for digital input
     movwf   CM1CON0
@@ -62,6 +62,7 @@ START
     goto main		;goto main and start the code
 
 main
+    call    init_lut
     call    init_tmr0
     call    init_tmr1
     call    init_dac
@@ -154,11 +155,11 @@ inter_high
 ih_tmr1
     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
     ;haal de gewenste waarde op
+    movf    INDF0;zet het adress waar de pointer naar wijst in de working register
     
+    movf    PREINC1; zet de waarde van de de sfr1 pointer in de work register en increment hem
     
-    ;schrijf de gewenste waarde in de VREFCON2
-    movlw   0xFF;
-    movwf   VREFCON2
+    movwf   VREFCON2;start de dac met de waarde uit de pointer
     return
 
 ih_tmr0

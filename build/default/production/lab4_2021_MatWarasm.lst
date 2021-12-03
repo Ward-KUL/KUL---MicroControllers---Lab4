@@ -1,4 +1,4 @@
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  17:17:38         PAGE  1
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-3-2021  16:53:47         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -60,147 +60,145 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00102E 0E00           00043     movlw   0x00        ; Value used to initialize data direction, only RA2 moet als output worden gebru
                             ikt used to be 0xFF
 001030 6E92           00044     movwf   TRISA       ; Set PORTA as output
-001032 0E04           00045     movlw   b'00000100'         ; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be anal
+                      00045     ;movlw   b'00000100'        ; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be anal
                             og (used to be 0x00)
-001034 6F5B           00046     movwf   ANSELA      
-001036 6A89           00047     clrf    LATA        ; clear A output latch
-001038 0E00           00048     movlw   0x00        ; Configure comparators for digital input
-00103A 6E98           00049     movwf   CM1CON0
-00103C 6A8A           00050     clrf    LATB        ; Initialize PORTB by clearing output data latches
-00103E 0E00           00051     movlw   0x00        ; Value used to initialize data direction
-001040 6E93           00052     movwf   TRISB       ; Set PORTB as output
-001042 6A8B           00053     clrf    LATC        ; Initialize PORTC by clearing output data latches
-001044 0E01           00054     movlw   0x01        ; Value used to initialize data direction
-001046 6E94           00055     movwf   TRISC       ; Set RC0 as input
+                      00046     ;movwf   ANSELA     
+001032 6A89           00047     clrf    LATA        ; clear A output latch
+001034 0E00           00048     movlw   0x00        ; Configure comparators for digital input
+001036 6E98           00049     movwf   CM1CON0
+001038 6A8A           00050     clrf    LATB        ; Initialize PORTB by clearing output data latches
+00103A 0E00           00051     movlw   0x00        ; Value used to initialize data direction
+00103C 6E93           00052     movwf   TRISB       ; Set PORTB as output
+00103E 6A8B           00053     clrf    LATC        ; Initialize PORTC by clearing output data latches
+001040 0E01           00054     movlw   0x01        ; Value used to initialize data direction
+001042 6E94           00055     movwf   TRISC       ; Set RC0 as input
                       00056     
                       00057     
                       00058 
-001048 9660           00059     bcf     UCON,3      ; to be sure to disable USB module
-00104A 8662           00060     bsf     UCFG,3      ; disable internal USB transceiver
+001044 9660           00059     bcf     UCON,3      ; to be sure to disable USB module
+001046 8662           00060     bsf     UCFG,3      ; disable internal USB transceiver
                       00061     
-00104C EF?? F???      00062     goto main           ;goto main and start the code
+001048 EF?? F???      00062     goto main           ;goto main and start the code
                       00063 
-001050                00064 main
-001050 EC?? F???      00065     call    init_tmr0
-001054 EC?? F???      00066     call    init_tmr1
-001058 EC?? F???      00067     call    init_dac
-00105C EF?? F???      00068     goto    loop
-                      00069     ;call    init_lut
-                      00070 
-001060                00071 init_dac    
-001060 0EE0           00072     movlw   b'11100000'; enable DAC, DACOUT is RA2
-001062 6E7C           00073     movwf   VREFCON1 
-001064 8EF2           00074     bsf     INTCON,GIE 
-001066 0012           00075     return
-                      00076     
-001068                00077 init_tmr0
-                      00078     ;enable timer0 interrupts
-001068 0EE0           00079     movlw   b'11100000' ;enables timer0 interrupts
-00106A 6EF2           00080     movwf   INTCON
-00106C 0E85           00081     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
-00106E 6ED5           00082     movwf   T0CON
-001070 0012           00083     return
-                      00084     
-001072                00085 init_tmr1
-                      00086     ;we willen dat de tmr1 met een frequentie van 62.5 interrupt -> op elke trigger nieuwe DA waarde nem
+00104C                00064 main
+00104C EC?? F???      00065     call    init_lut
+001050 EC?? F???      00066     call    init_tmr0
+001054 EC?? F???      00067     call    init_tmr1
+001058 EC?? F???      00068     call    init_dac
+00105C EF?? F???      00069     goto    loop
+                      00070     ;call    init_lut
+                      00071 
+001060                00072 init_dac    
+001060 0EE0           00073     movlw   b'11100000'; enable DAC, DACOUT is RA2
+001062 6E7C           00074     movwf   VREFCON1 
+001064 8EF2           00075     bsf     INTCON,GIE 
+001066 0012           00076     return
+                      00077     
+001068                00078 init_tmr0
+                      00079     ;enable timer0 interrupts
+001068 0EE0           00080     movlw   b'11100000' ;enables timer0 interrupts
+00106A 6EF2           00081     movwf   INTCON
+00106C 0E85           00082     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
+00106E 6ED5           00083     movwf   T0CON
+001070 0012           00084     return
+                      00085     
+001072                00086 init_tmr1
+                      00087     ;we willen dat de tmr1 met een frequentie van 62.5 interrupt -> op elke trigger nieuwe DA waarde nem
                             en
-001072 0E27           00087     movlw    b'00100111';stel de waardes van de timer1 in
-001074 6ECD           00088     movwf   T1CON
-001076 84F1           00089     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
-001078 809D           00090     bsf     PIE1,0; enable tmr1 interrupt
-00107A 809D           00091     bsf     PIE1,0; enable tmr2 interrupt(just to be sure)
-00107C 0012           00092     return
-                      00093     
+001072 0E27           00088     movlw    b'00100111';stel de waardes van de timer1 in
+001074 6ECD           00089     movwf   T1CON
+001076 84F1           00090     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
+001078 809D           00091     bsf     PIE1,0; enable tmr1 interrupt
+00107A 809D           00092     bsf     PIE1,0; enable tmr2 interrupt(just to be sure)
+00107C 0012           00093     return
                       00094     
-00107E                00095 loop
-00107E EF?? F???      00096     goto    loop
-                      00097 
-                      00098 ;***********************************************************
-                      00099 ; subroutines
-                      00100 ;***********************************************************
-001082                00101 init_lut
-                      00102     ; FSR1: will go though table of sine samples; starts at address 0x010
-001082 EE10 F010      00103     lfsr    1, 0x010
-001086 0E0F           00104     movlw   D'15'       
-001088 6E10           00105     movwf   0x10
-00108A 0E15           00106     movlw   D'21'       
-00108C 6E11           00107     movwf   0x11
-00108E 0E1A           00108     movlw   D'26'       
-001090 6E12           00109     movwf   0x12
-001092 0E1D           00110     movlw   D'29'       
-001094 6E13           00111     movwf   0x13
-001096 0E1E           00112     movlw   D'30'       
-001098 6E14           00113     movwf   0x14
-00109A 0E1D           00114     movlw   D'29'       
-00109C 6E15           00115     movwf   0x15
-00109E 0E1A           00116     movlw   D'26'       
-0010A0 6E16           00117     movwf   0x16
-0010A2 0E15           00118     movlw   D'21'       
-0010A4 6E17           00119     movwf   0x17
-0010A6 0E0F           00120     movlw   D'15'       
-0010A8 6E18           00121     movwf   0x18
-0010AA 0E09           00122     movlw   D'9'        
-0010AC 6E19           00123     movwf   0x19
-0010AE 0E04           00124     movlw   D'4'        
-0010B0 6E1A           00125     movwf   0x1A
-0010B2 0E01           00126     movlw   D'1'        
-0010B4 6E1B           00127     movwf   0x1B
-0010B6 0E00           00128     movlw   D'0'        
-0010B8 6E1C           00129     movwf   0x1C
-0010BA 0E01           00130     movlw   D'1'        
-0010BC 6E1D           00131     movwf   0x1D
-0010BE 0E04           00132     movlw   D'4'        
-0010C0 6E1E           00133     movwf   0x1E
-0010C2 0E09           00134     movlw   D'9'        
-0010C4 6E1F           00135     movwf   0x1F
-                      00136     
-                      00137     ; FSR0: song
-                      00138     ;complete me
-                      00139     
-0010C6 0012           00140     return
-                      00141     
-                      00142 ;***********************************************************
-                      00143 ; interrupt handling
-                      00144 ;***********************************************************
-                      00145 
-0010C8                00146 inter_high
-0010C8 B4F2           00147     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
-0010CA EC?? F???      00148     call ih_tmr0
-0010CE B09E           00149     btfsc   PIR1,0  ;will be high when tmr1 has given an interrupt
-0010D0 EC?? F???      00150     call ih_tmr1
-0010D4 0010           00151     retfie
-                      00152     
-                      00153 
-0010D6                00154 ih_tmr1
-                      00155     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
-                      00156     ;haal de gewenste waarde op
-                      00157     
-                      00158     
-                      00159     ;schrijf de gewenste waarde in de VREFCON2
-0010D6 0EFF           00160     movlw   0xFF;
-0010D8 6E7B           00161     movwf   VREFCON2
-0010DA 0012           00162     return
-                      00163 
-0010DC                00164 ih_tmr0
-0010DC 728B           00165     btg     LATC,1; toggle RC1 led
-0010DE 94F2           00166     bcf     INTCON,2;clear the flag bit
-0010E0 0012           00167     return
-                      00168     
-0010E2                00169 inter_low
-0010E2 0000           00170     nop
-0010E4 0010           00171     retfie
+                      00095     
+00107E                00096 loop
+00107E EF?? F???      00097     goto    loop
+                      00098 
+                      00099 ;***********************************************************
+                      00100 ; subroutines
+                      00101 ;***********************************************************
+001082                00102 init_lut
+                      00103     ; FSR1: will go though table of sine samples; starts at address 0x010
+001082 EE10 F010      00104     lfsr    1, 0x010
+001086 0E0F           00105     movlw   D'15'       
+001088 6E10           00106     movwf   0x10
+00108A 0E15           00107     movlw   D'21'       
+00108C 6E11           00108     movwf   0x11
+00108E 0E1A           00109     movlw   D'26'       
+001090 6E12           00110     movwf   0x12
+001092 0E1D           00111     movlw   D'29'       
+001094 6E13           00112     movwf   0x13
+001096 0E1E           00113     movlw   D'30'       
+001098 6E14           00114     movwf   0x14
+00109A 0E1D           00115     movlw   D'29'       
+00109C 6E15           00116     movwf   0x15
+00109E 0E1A           00117     movlw   D'26'       
+0010A0 6E16           00118     movwf   0x16
+0010A2 0E15           00119     movlw   D'21'       
+0010A4 6E17           00120     movwf   0x17
+0010A6 0E0F           00121     movlw   D'15'       
+0010A8 6E18           00122     movwf   0x18
+0010AA 0E09           00123     movlw   D'9'        
+0010AC 6E19           00124     movwf   0x19
+0010AE 0E04           00125     movlw   D'4'        
+0010B0 6E1A           00126     movwf   0x1A
+0010B2 0E01           00127     movlw   D'1'        
+0010B4 6E1B           00128     movwf   0x1B
+0010B6 0E00           00129     movlw   D'0'        
+0010B8 6E1C           00130     movwf   0x1C
+0010BA 0E01           00131     movlw   D'1'        
+0010BC 6E1D           00132     movwf   0x1D
+0010BE 0E04           00133     movlw   D'4'        
+0010C0 6E1E           00134     movwf   0x1E
+0010C2 0E09           00135     movlw   D'9'        
+0010C4 6E1F           00136     movwf   0x1F
+                      00137     
+                      00138     ; FSR0: song
+                      00139     ;complete me
+                      00140     
+0010C6 0012           00141     return
+                      00142     
+                      00143 ;***********************************************************
+                      00144 ; interrupt handling
+                      00145 ;***********************************************************
+                      00146 
+0010C8                00147 inter_high
+0010C8 B4F2           00148     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
+0010CA EC?? F???      00149     call ih_tmr0
+0010CE B09E           00150     btfsc   PIR1,0  ;will be high when tmr1 has given an interrupt
+0010D0 EC?? F???      00151     call ih_tmr1
+0010D4 0010           00152     retfie
+                      00153     
+                      00154 
+0010D6                00155 ih_tmr1
+                      00156     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
+                      00157     ;haal de gewenste waarde op
+0010D6 52E4           00158     movf    PREINC1; zet de waarde van de de sfr1 pointer in de work register en increment hem
+0010D8 6E7B           00159     movwf   VREFCON2;start de dac met de waarde uit de pointer
+0010DA 0012           00160     return
+                      00161 
+0010DC                00162 ih_tmr0
+0010DC 728B           00163     btg     LATC,1; toggle RC1 led
+0010DE 94F2           00164     bcf     INTCON,2;clear the flag bit
+0010E0 0012           00165     return
+                      00166     
+0010E2                00167 inter_low
+0010E2 0000           00168     nop
+0010E4 0010           00169     retfie
+                      00170 ;***********************************************************
+                      00171 ; table
                       00172 ;***********************************************************
-                      00173 ; table
-                      00174 ;***********************************************************
-                      00175     
-0010E6                00176 NOTES ;TMR1H TM1L
-0010E6 0000           00177     DB 0x00, 0x00   ;Silence?
-                      00178     ;calculate the correct values
-0010E8 EEFF           00179     DB 0xFF, 0xEE   ;C = do
-                      00180     ;...
-                      00181     
-                      00182     END
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-2-2021  17:17:38         PAGE  2
+                      00173     
+0010E6                00174 NOTES ;TMR1H TM1L
+0010E6 0000           00175     DB 0x00, 0x00   ;Silence?
+                      00176     ;calculate the correct values
+0010E8 EEFF           00177     DB 0xFF, 0xEE   ;C = do
+                      00178     ;...
+                      00179     
+                      00180     END
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-3-2021  16:53:47         PAGE  2
 
 
 SYMBOL TABLE
@@ -1290,7 +1288,7 @@ init_tmr1                         00001072
 inter_high                        000010C8
 inter_low                         000010E2
 loop                              0000107E
-main                              00001050
+main                              0000104C
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
