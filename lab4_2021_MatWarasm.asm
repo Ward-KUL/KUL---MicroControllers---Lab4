@@ -67,6 +67,7 @@ main
     call    init_tmr0
     call    init_tmr1
     call    init_dac
+    call    init_tblptr
     goto    loop
 
 init_dac    
@@ -91,6 +92,16 @@ init_tmr1
     bsf	    INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
     bsf	    PIE1,0; enable tmr1 interrupt
     bsf	    PIE1,0; enable tmr2 interrupt(just to be sure)
+    return
+    
+init_tblptr
+    ;we zetten de table pointer op de juiste plaats, wordt gecalled na elke read en helemaal in het begin
+    movlw   upper NOTES
+    movwf   TBLPTRU
+    movlw   high NOTES
+    movwf   TBLPTRH
+    movlw   low NOTES
+    movwf   TBLPTRL
     return
     
     
@@ -138,23 +149,18 @@ init_lut
     
     ; FSR0: song
     lfsr    0,0x20
-    movff   NOTES,0x20;zet het adress van notes op de juiste plaats
+    
     movlw   D'1';laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
-    addwf   0x20,1;tel deze bij elkaar op en steek terug in het file register
-    movff   NOTES,0x21
+    movwf   0x20
     movlw   D'2'
-    addwf   0x21,1
-    movff   NOTES,0x22
+    movwf   0x21
     movlw   D'3'
-    addwf   0x22,1
-    movff   NOTES,0x23
+    movwf   0x22
     movlw   D'1'
-    addwf   0x24,1
-    movff   NOTES,0x24
+    movwf   0x24
     movff   0x24,0x25;zelfde noot twee keer achter elkaar
-    movff   NOTES,0x26
     movlw   D'2'
-    addwf   0x26,1
+    movwf   0x26
     
     
     
@@ -192,13 +198,26 @@ ih_tmr1
 ih_tmr0
     btg	    LATC,1; toggle RC1 led
     ;make tm1 play a different frequency according to the correct note
-    movff   POSTINC0,TBLPTRL; zet het adress van de juiste nood in de table pointer
+    call init_tblptr
+    ;een while loop die elke keer een tblread doet enzo naar de juiste plaats beweegt tot we in table lat de juiste waarde hebben staan
+    movf    POSTINC0,0;zet de hoeveelheid aan noten dat we moeten skippen in de WREG
+    tstfsz  WREG,0;als wreg al nu is moeten we geen noten overslaan
+    goto loop_table_read 
+    goto read_from_table
+    
+loop_table_read
+    tblrd*+;skip een noot
+    tblrd*+
+    decfsz  WREG,0;we gaan naar beneden tot we genoeg noten hebben geskipped
+    goto loop_table_read
+    goto read_from_table
+
+read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan
     tblrd*+;  lees de waardes op de plaats van de noot
     movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
     tblrd*+; lees de high bit
     movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
-    
-    
+      
     bcf	    INTCON,2;clear the flag bit
     return
     

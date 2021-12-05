@@ -1,4 +1,4 @@
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  14:56:27         PAGE  1
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  15:17:48         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -86,161 +86,182 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000050 EC?? F???      00067     call    init_tmr0
 000054 EC?? F???      00068     call    init_tmr1
 000058 EC?? F???      00069     call    init_dac
-00005C EF?? F???      00070     goto    loop
-                      00071 
-000060                00072 init_dac    
-000060 0EE0           00073     movlw   b'11100000'; enable DAC, DACOUT is RA2
-000062 6E7C           00074     movwf   VREFCON1 
-000064 8EF2           00075     bsf     INTCON,GIE 
-000066 6801           00076     setf    TESTVAR,0;set the testvar variable high cus it'll trigger on 0
-000068 0012           00077     return
-                      00078     
-00006A                00079 init_tmr0
-                      00080     ;enable timer0 interrupts
-00006A 0EE0           00081     movlw   b'11100000' ;enables timer0 interrupts
-00006C 6EF2           00082     movwf   INTCON
-00006E 0E85           00083     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
-000070 6ED5           00084     movwf   T0CON
-000072 0012           00085     return
-                      00086     
-000074                00087 init_tmr1
-                      00088     ;we willen dat de tmr1 met een frequentie van 62.5 interrupt -> op elke trigger nieuwe DA waarde nem
+00005C EC?? F???      00070     call    init_tblptr
+000060 EF?? F???      00071     goto    loop
+                      00072 
+000064                00073 init_dac    
+000064 0EE0           00074     movlw   b'11100000'; enable DAC, DACOUT is RA2
+000066 6E7C           00075     movwf   VREFCON1 
+000068 8EF2           00076     bsf     INTCON,GIE 
+00006A 6801           00077     setf    TESTVAR,0;set the testvar variable high cus it'll trigger on 0
+00006C 0012           00078     return
+                      00079     
+00006E                00080 init_tmr0
+                      00081     ;enable timer0 interrupts
+00006E 0EE0           00082     movlw   b'11100000' ;enables timer0 interrupts
+000070 6EF2           00083     movwf   INTCON
+000072 0E85           00084     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
+000074 6ED5           00085     movwf   T0CON
+000076 0012           00086     return
+                      00087     
+000078                00088 init_tmr1
+                      00089     ;we willen dat de tmr1 met een frequentie van 62.5 interrupt -> op elke trigger nieuwe DA waarde nem
                             en
-000074 0E27           00089     movlw    b'00100111';stel de waardes van de timer1 in
-000076 6ECD           00090     movwf   T1CON
-000078 84F1           00091     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
-00007A 809D           00092     bsf     PIE1,0; enable tmr1 interrupt
-00007C 809D           00093     bsf     PIE1,0; enable tmr2 interrupt(just to be sure)
-00007E 0012           00094     return
-                      00095     
+000078 0E27           00090     movlw    b'00100111';stel de waardes van de timer1 in
+00007A 6ECD           00091     movwf   T1CON
+00007C 84F1           00092     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
+00007E 809D           00093     bsf     PIE1,0; enable tmr1 interrupt
+000080 809D           00094     bsf     PIE1,0; enable tmr2 interrupt(just to be sure)
+000082 0012           00095     return
                       00096     
-000080                00097 loop
-000080 EF?? F???      00098     goto    loop
-                      00099 
-                      00100 ;***********************************************************
-                      00101 ; subroutines
-                      00102 ;***********************************************************
-000084                00103 init_lut
-                      00104     ; FSR1: will go though table of sine samples; starts at address 0x010
-000084 EE10 F010      00105     lfsr    1, 0x010
-000088 0E0F           00106     movlw   D'15'       
-00008A 6E10           00107     movwf   0x10
-00008C 0E15           00108     movlw   D'21'       
-00008E 6E11           00109     movwf   0x11
-000090 0E1A           00110     movlw   D'26'       
-000092 6E12           00111     movwf   0x12
-000094 0E1D           00112     movlw   D'29'       
-000096 6E13           00113     movwf   0x13
-000098 0E1E           00114     movlw   D'30'       
-00009A 6E14           00115     movwf   0x14
-00009C 0E1D           00116     movlw   D'29'       
-00009E 6E15           00117     movwf   0x15
-0000A0 0E1A           00118     movlw   D'26'       
-0000A2 6E16           00119     movwf   0x16
-0000A4 0E15           00120     movlw   D'21'       
-0000A6 6E17           00121     movwf   0x17
-0000A8 0E0F           00122     movlw   D'15'       
-0000AA 6E18           00123     movwf   0x18
-0000AC 0E09           00124     movlw   D'9'        
-0000AE 6E19           00125     movwf   0x19
-0000B0 0E04           00126     movlw   D'4'        
-0000B2 6E1A           00127     movwf   0x1A
-0000B4 0E01           00128     movlw   D'1'        
-0000B6 6E1B           00129     movwf   0x1B
-0000B8 0E00           00130     movlw   D'0'        
-0000BA 6E1C           00131     movwf   0x1C
-0000BC 0E01           00132     movlw   D'1'        
-0000BE 6E1D           00133     movwf   0x1D
-0000C0 0E04           00134     movlw   D'4'        
-0000C2 6E1E           00135     movwf   0x1E
-0000C4 0E09           00136     movlw   D'9'        
-0000C6 6E1F           00137     movwf   0x1F
-                      00138     
-                      00139     ; FSR0: song
-0000C8 EE00 F020      00140     lfsr    0,0x20
-0000CC C??? F020      00141     movff   NOTES,0x20;zet het adress van notes op de juiste plaats
-0000D0 0E01           00142     movlw   D'1';laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
-0000D2 2620           00143     addwf   0x20,1;tel deze bij elkaar op en steek terug in het file register
-0000D4 C??? F021      00144     movff   NOTES,0x21
-0000D8 0E02           00145     movlw   D'2'
-0000DA 2621           00146     addwf   0x21,1
-0000DC C??? F022      00147     movff   NOTES,0x22
-0000E0 0E03           00148     movlw   D'3'
-0000E2 2622           00149     addwf   0x22,1
-0000E4 C??? F023      00150     movff   NOTES,0x23
-0000E8 0E01           00151     movlw   D'1'
-0000EA 2624           00152     addwf   0x24,1
-0000EC C??? F024      00153     movff   NOTES,0x24
-0000F0 C024 F025      00154     movff   0x24,0x25;zelfde noot twee keer achter elkaar
-0000F4 C??? F026      00155     movff   NOTES,0x26
-0000F8 0E02           00156     movlw   D'2'
-0000FA 2626           00157     addwf   0x26,1
-                      00158     
-                      00159     
-                      00160     
-0000FC 0012           00161     return
-                      00162     
-                      00163 ;***********************************************************
-                      00164 ; interrupt handling
-                      00165 ;***********************************************************
-                      00166 
-0000FE                00167 inter_high
-0000FE B4F2           00168     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
-000100 EC?? F???      00169     call ih_tmr0
-000104 B09E           00170     btfsc   PIR1,0  ;will be high when tmr1 has given an interrupt
-000106 EC?? F???      00171     call ih_tmr1
-00010A 0010           00172     retfie
-                      00173     
-00010C                00174 reset_sin_wave
-00010C EE10 F010      00175     lfsr    1, 0x010
-000110 EF?? F???      00176     goto    schrijf_op_dac
-000114                00177 schrijf_op_dac
-000114 50E6           00178     movf    POSTINC1,0; zet de waarde van de de sfr1 pointer in de work register en increment hem
-000116 6E7B           00179     movwf   VREFCON2;start de dac met de waarde uit de pointer
-000118 0012           00180     return
-00011A                00181 ih_tmr1
-                      00182     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
-                      00183     ;haal de gewenste waarde op
-00011A 50E1           00184     movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
-00011C 0A20           00185     xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
-00011E 6E01           00186     movwf   TESTVAR
-000120 6601           00187     tstfsz  TESTVAR;als 0, de volgende instructie discarded
-000122 EF?? F???      00188     goto    schrijf_op_dac
-000126 EF?? F???      00189     goto    reset_sin_wave;zet de sinus terug naar 0
-00012A 0012           00190     return
-                      00191 
-00012C                00192 ih_tmr0
-00012C 728B           00193     btg     LATC,1; toggle RC1 led
-                      00194     ;make tm1 play a different frequency according to the correct note
-00012E CFEE FFF6      00195     movff   POSTINC0,TBLPTRL; zet het adress van de juiste nood in de table pointer
-000132 0009           00196     tblrd*+;  ;  lees de waardes op de plaats van de noot
-000134 CFF5 FFCF      00197     movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
-000138 0009           00198     tblrd*+; ; lees de high bit
-00013A CFF5 FFCE      00199     movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
-                      00200     
-                      00201     
-00013E 94F2           00202     bcf     INTCON,2;clear the flag bit
-000140 0012           00203     return
-                      00204     
-000142                00205 inter_low
-000142 0000           00206     nop
-000144 0010           00207     retfie
-                      00208 ;***********************************************************
-                      00209 ; table
-                      00210 ;***********************************************************
-                      00211     
-000146                00212 NOTES ;TMR1H TM1L
-000146 0000           00213     DB 0x00, 0x00   ;Silence?
-                      00214     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
-000148 EEFF           00215     DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
-00014A F0FF           00216     DB 0xFF, 0xF0   ;D 1174,66 Hz
-00014C F8FF           00217     DB 0xFF, 0xF8   ;E 1318,51 Hz
-00014E FAFF           00218     DB 0xFF, 0xFA   ;F 1396,91 Hz
-000150 FFFF           00219     DB 0xFF, 0xFF   ;G 1567,98 Hz
-000152 DEFF           00220     DB 0xFF, 0xDE   ;A 1760 Hz
-                      00221     
-                      00222     END
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  14:56:27         PAGE  2
+000084                00097 init_tblptr
+                      00098     ;we zetten de table pointer op de juiste plaats, wordt gecalled na elke read en helemaal in het begi
+                            n
+000084 0E??           00099     movlw   upper NOTES
+000086 6EF8           00100     movwf   TBLPTRU
+000088 0E??           00101     movlw   high NOTES
+00008A 6EF7           00102     movwf   TBLPTRH
+00008C 0E??           00103     movlw   low NOTES
+00008E 6EF6           00104     movwf   TBLPTRL
+000090 0012           00105     return
+                      00106     
+                      00107     
+000092                00108 loop
+000092 EF?? F???      00109     goto    loop
+                      00110 
+                      00111 ;***********************************************************
+                      00112 ; subroutines
+                      00113 ;***********************************************************
+000096                00114 init_lut
+                      00115     ; FSR1: will go though table of sine samples; starts at address 0x010
+000096 EE10 F010      00116     lfsr    1, 0x010
+00009A 0E0F           00117     movlw   D'15'       
+00009C 6E10           00118     movwf   0x10
+00009E 0E15           00119     movlw   D'21'       
+0000A0 6E11           00120     movwf   0x11
+0000A2 0E1A           00121     movlw   D'26'       
+0000A4 6E12           00122     movwf   0x12
+0000A6 0E1D           00123     movlw   D'29'       
+0000A8 6E13           00124     movwf   0x13
+0000AA 0E1E           00125     movlw   D'30'       
+0000AC 6E14           00126     movwf   0x14
+0000AE 0E1D           00127     movlw   D'29'       
+0000B0 6E15           00128     movwf   0x15
+0000B2 0E1A           00129     movlw   D'26'       
+0000B4 6E16           00130     movwf   0x16
+0000B6 0E15           00131     movlw   D'21'       
+0000B8 6E17           00132     movwf   0x17
+0000BA 0E0F           00133     movlw   D'15'       
+0000BC 6E18           00134     movwf   0x18
+0000BE 0E09           00135     movlw   D'9'        
+0000C0 6E19           00136     movwf   0x19
+0000C2 0E04           00137     movlw   D'4'        
+0000C4 6E1A           00138     movwf   0x1A
+0000C6 0E01           00139     movlw   D'1'        
+0000C8 6E1B           00140     movwf   0x1B
+0000CA 0E00           00141     movlw   D'0'        
+0000CC 6E1C           00142     movwf   0x1C
+0000CE 0E01           00143     movlw   D'1'        
+0000D0 6E1D           00144     movwf   0x1D
+0000D2 0E04           00145     movlw   D'4'        
+0000D4 6E1E           00146     movwf   0x1E
+0000D6 0E09           00147     movlw   D'9'        
+0000D8 6E1F           00148     movwf   0x1F
+                      00149     
+                      00150     ; FSR0: song
+0000DA EE00 F020      00151     lfsr    0,0x20
+                      00152     
+0000DE 0E01           00153     movlw   D'1';laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
+0000E0 6E20           00154     movwf   0x20
+0000E2 0E02           00155     movlw   D'2'
+0000E4 6E21           00156     movwf   0x21
+0000E6 0E03           00157     movlw   D'3'
+0000E8 6E22           00158     movwf   0x22
+0000EA 0E01           00159     movlw   D'1'
+0000EC 6E24           00160     movwf   0x24
+0000EE C024 F025      00161     movff   0x24,0x25;zelfde noot twee keer achter elkaar
+0000F2 0E02           00162     movlw   D'2'
+0000F4 6E26           00163     movwf   0x26
+                      00164     
+                      00165     
+                      00166     
+0000F6 0012           00167     return
+                      00168     
+                      00169 ;***********************************************************
+                      00170 ; interrupt handling
+                      00171 ;***********************************************************
+                      00172 
+0000F8                00173 inter_high
+0000F8 B4F2           00174     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
+0000FA EC?? F???      00175     call ih_tmr0
+0000FE B09E           00176     btfsc   PIR1,0  ;will be high when tmr1 has given an interrupt
+000100 EC?? F???      00177     call ih_tmr1
+000104 0010           00178     retfie
+                      00179     
+000106                00180 reset_sin_wave
+000106 EE10 F010      00181     lfsr    1, 0x010
+00010A EF?? F???      00182     goto    schrijf_op_dac
+00010E                00183 schrijf_op_dac
+00010E 50E6           00184     movf    POSTINC1,0; zet de waarde van de de sfr1 pointer in de work register en increment hem
+000110 6E7B           00185     movwf   VREFCON2;start de dac met de waarde uit de pointer
+000112 0012           00186     return
+000114                00187 ih_tmr1
+                      00188     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
+                      00189     ;haal de gewenste waarde op
+000114 50E1           00190     movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
+000116 0A20           00191     xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
+000118 6E01           00192     movwf   TESTVAR
+00011A 6601           00193     tstfsz  TESTVAR;als 0, de volgende instructie discarded
+00011C EF?? F???      00194     goto    schrijf_op_dac
+000120 EF?? F???      00195     goto    reset_sin_wave;zet de sinus terug naar 0
+000124 0012           00196     return
+                      00197 
+000126                00198 ih_tmr0
+000126 728B           00199     btg     LATC,1; toggle RC1 led
+                      00200     ;make tm1 play a different frequency according to the correct note
+000128 EC?? F???      00201     call init_tblptr
+                      00202     ;een while loop die elke keer een tblread doet enzo naar de juiste plaats beweegt tot we in table la
+                            t de juiste waarde hebben staan
+00012C 50EE           00203     movf    POSTINC0,0;zet de hoeveelheid aan noten dat we moeten skippen in de WREG
+00012E 66E8           00204     tstfsz  WREG,0;als wreg al nu is moeten we geen noten overslaan
+000130 EF?? F???      00205     goto loop_table_read 
+000134 EF?? F???      00206     goto read_from_table
+                      00207     
+000138                00208 loop_table_read
+000138 0009           00209     tblrd*+;;skip een noot
+00013A 0009           00210     tblrd*+
+00013C 2CE8           00211     decfsz  WREG,0;we gaan naar beneden tot we genoeg noten hebben geskipped
+00013E EF?? F???      00212     goto loop_table_read
+000142 EF?? F???      00213     goto read_from_table
+                      00214 
+000146                00215 read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan
+000146 0009           00216     tblrd*+;  ;  lees de waardes op de plaats van de noot
+000148 CFF5 FFCF      00217     movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
+00014C 0009           00218     tblrd*+; ; lees de high bit
+00014E CFF5 FFCE      00219     movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
+                      00220       
+000152 94F2           00221     bcf     INTCON,2;clear the flag bit
+000154 0012           00222     return
+                      00223     
+000156                00224 inter_low
+000156 0000           00225     nop
+000158 0010           00226     retfie
+                      00227 ;***********************************************************
+                      00228 ; table
+                      00229 ;***********************************************************
+                      00230     
+00015A                00231 NOTES ;TMR1H TM1L
+00015A 0000           00232     DB 0x00, 0x00   ;Silence?
+                      00233     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
+00015C EEFF           00234     DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
+00015E F0FF           00235     DB 0xFF, 0xF0   ;D 1174,66 Hz
+000160 F8FF           00236     DB 0xFF, 0xF8   ;E 1318,51 Hz
+000162 FAFF           00237     DB 0xFF, 0xFA   ;F 1396,91 Hz
+000164 FFFF           00238     DB 0xFF, 0xFF   ;G 1567,98 Hz
+000166 DEFF           00239     DB 0xFF, 0xDE   ;A 1760 Hz
+                      00240     
+                      00241     END
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  15:17:48         PAGE  2
 
 
 SYMBOL TABLE
@@ -670,7 +691,7 @@ MC2OUT                            00000006
 MSSP1MD                           00000006
 MSSPMD                            00000006
 N                                 00000004
-NOTES                             00000146
+NOTES                             0000015A
 NOT_BOR                           00000000
 NOT_DONE                          00000001
 NOT_PD                            00000002
@@ -1322,18 +1343,21 @@ _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
-ih_tmr0                           0000012C
-ih_tmr1                           0000011A
-init_dac                          00000060
-init_lut                          00000084
-init_tmr0                         0000006A
-init_tmr1                         00000074
-inter_high                        000000FE
-inter_low                         00000142
-loop                              00000080
+ih_tmr0                           00000126
+ih_tmr1                           00000114
+init_dac                          00000064
+init_lut                          00000096
+init_tblptr                       00000084
+init_tmr0                         0000006E
+init_tmr1                         00000078
+inter_high                        000000F8
+inter_low                         00000156
+loop                              00000092
+loop_table_read                   00000138
 main                              0000004C
-reset_sin_wave                    0000010C
-schrijf_op_dac                    00000114
+read_from_table                   00000146
+reset_sin_wave                    00000106
+schrijf_op_dac                    0000010E
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
