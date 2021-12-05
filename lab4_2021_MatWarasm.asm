@@ -9,7 +9,7 @@
 ; Reset Vector
 ;***********************************************************
 
-    ORG     0x0000	; Reset Vector
+    ORG     0x1000	; Reset Vector
 			; When debugging:0x0000; when loading: 0x1000
     GOTO    START
 
@@ -17,9 +17,9 @@
 ; Interrupt Vector
 ;***********************************************************
 
-    ORG     0x0008	; Interrupt Vector HIGH priority
+    ORG     0x1008	; Interrupt Vector HIGH priority
     GOTO    inter_high	; When debugging:0x008; when loading: 0x1008
-    ORG     0x0018	; Interrupt Vector LOW priority
+    ORG     0x1018	; Interrupt Vector LOW priority
     GOTO    inter_low	; When debugging:0x0008; when loading: 0x1018
 
 ;***********************************************************
@@ -31,7 +31,7 @@ TESTVAR	equ 0x01;variabele om testresultaat in te steken
 ; Program Code Starts Here
 ;***********************************************************
 
-    ORG     0x0020	; When debugging:0x020; when loading: 0x1020
+    ORG     0x1020	; When debugging:0x020; when loading: 0x1020
 
 START
     movlw   0x80	; load value 0x80 in work register
