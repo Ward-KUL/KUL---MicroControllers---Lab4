@@ -1,4 +1,4 @@
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  14:43:15         PAGE  1
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  14:56:31         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -26,225 +26,221 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00009 ; Reset Vector
                       00010 ;***********************************************************
                       00011 
-                      00012     ORG     0x1000      ; Reset Vector
+                      00012     ORG     0x0000      ; Reset Vector
                       00013                         ; When debugging:0x0000; when loading: 0x1000
-001000 EF?? F???      00014     GOTO    START
+000000 EF?? F???      00014     GOTO    START
                       00015 
                       00016 ;***********************************************************
                       00017 ; Interrupt Vector
                       00018 ;***********************************************************
                       00019 
-                      00020     ORG     0x1008      ; Interrupt Vector HIGH priority
-001008 EF?? F???      00021     GOTO    inter_high  ; When debugging:0x008; when loading: 0x1008
-                      00022     ORG     0x1018      ; Interrupt Vector LOW priority
-001018 EF?? F???      00023     GOTO    inter_low   ; When debugging:0x0008; when loading: 0x1018
+                      00020     ORG     0x0008      ; Interrupt Vector HIGH priority
+000008 EF?? F???      00021     GOTO    inter_high  ; When debugging:0x008; when loading: 0x1008
+                      00022     ORG     0x0018      ; Interrupt Vector LOW priority
+000018 EF?? F???      00023     GOTO    inter_low   ; When debugging:0x0008; when loading: 0x1018
                       00024 
                       00025 ;***********************************************************
                       00026     ;File register
   00000001            00027 TESTVAR equ 0x01;variabele om testresultaat in te steken
-  00000002            00028 TMR1HVAR        equ 0x02;variabele voor de tmr1 high bit in op te slaan
-  00000003            00029 TMR1LVAR        equ 0x03;variabele voor de tmr1 low bit in op te slaan
+                      00028 ;TMR1HVAR       equ 0x02;variabele voor de tmr1 high bit in op te slaan
+                      00029 ;TMR1LVAR       equ 0x03;variabele voor de tmr1 low bit in op te slaan
                       00030 ;***********************************************************
                       00031 ; Program Code Starts Here
                       00032 ;***********************************************************
                       00033 
-                      00034     ORG     0x1020      ; When debugging:0x020; when loading: 0x1020
+                      00034     ORG     0x0020      ; When debugging:0x020; when loading: 0x1020
                       00035 
-001020                00036 START
-001020 0E80           00037     movlw   0x80        ; load value 0x80 in work register
-001022 6E9B           00038     movwf   OSCTUNE             
-001024 0E70           00039     movlw   0x70        ; load value 0x70 in work register
-001026 6ED3           00040     movwf   OSCCON              
-001028 0E10           00041     movlw   0x10        ; load value 0x10 to work register
-00102A 6ED2           00042     movwf   OSCCON2             
-00102C 6A89           00043     clrf    LATA        ; Initialize PORTA by clearing output data latches
-00102E 0E00           00044     movlw   0x00        ; Value used to initialize data direction, only RA2 moet als output worden gebru
+000020                00036 START
+000020 0E80           00037     movlw   0x80        ; load value 0x80 in work register
+000022 6E9B           00038     movwf   OSCTUNE             
+000024 0E70           00039     movlw   0x70        ; load value 0x70 in work register
+000026 6ED3           00040     movwf   OSCCON              
+000028 0E10           00041     movlw   0x10        ; load value 0x10 to work register
+00002A 6ED2           00042     movwf   OSCCON2             
+00002C 6A89           00043     clrf    LATA        ; Initialize PORTA by clearing output data latches
+00002E 0E00           00044     movlw   0x00        ; Value used to initialize data direction, only RA2 moet als output worden gebru
                             ikt used to be 0xFF
-001030 6E92           00045     movwf   TRISA       ; Set PORTA as output
+000030 6E92           00045     movwf   TRISA       ; Set PORTA as output
                       00046     ;movlw   b'00000100'        ; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be anal
                             og (used to be 0x00)
                       00047     ;movwf   ANSELA     
-001032 6A89           00048     clrf    LATA        ; clear A output latch
-001034 0E00           00049     movlw   0x00        ; Configure comparators for digital input
-001036 6E98           00050     movwf   CM1CON0
-001038 6A8A           00051     clrf    LATB        ; Initialize PORTB by clearing output data latches
-00103A 0E00           00052     movlw   0x00        ; Value used to initialize data direction
-00103C 6E93           00053     movwf   TRISB       ; Set PORTB as output
-00103E 6A8B           00054     clrf    LATC        ; Initialize PORTC by clearing output data latches
-001040 0E01           00055     movlw   0x01        ; Value used to initialize data direction
-001042 6E94           00056     movwf   TRISC       ; Set RC0 as input
+000032 6A89           00048     clrf    LATA        ; clear A output latch
+000034 0E00           00049     movlw   0x00        ; Configure comparators for digital input
+000036 6E98           00050     movwf   CM1CON0
+000038 6A8A           00051     clrf    LATB        ; Initialize PORTB by clearing output data latches
+00003A 0E00           00052     movlw   0x00        ; Value used to initialize data direction
+00003C 6E93           00053     movwf   TRISB       ; Set PORTB as output
+00003E 6A8B           00054     clrf    LATC        ; Initialize PORTC by clearing output data latches
+000040 0E01           00055     movlw   0x01        ; Value used to initialize data direction
+000042 6E94           00056     movwf   TRISC       ; Set RC0 as input
                       00057     
                       00058     
                       00059 
-001044 9660           00060     bcf     UCON,3      ; to be sure to disable USB module
-001046 8662           00061     bsf     UCFG,3      ; disable internal USB transceiver
+000044 9660           00060     bcf     UCON,3      ; to be sure to disable USB module
+000046 8662           00061     bsf     UCFG,3      ; disable internal USB transceiver
                       00062     
-001048 EF?? F???      00063     goto main           ;goto main and start the code
+000048 EF?? F???      00063     goto main           ;goto main and start the code
                       00064 
-00104C                00065 main
-00104C EC?? F???      00066     call    init_lut
-001050 EC?? F???      00067     call    init_tmr0
-001054 EC?? F???      00068     call    init_tmr1
-001058 EC?? F???      00069     call    init_dac
-00105C EF?? F???      00070     goto    loop
+00004C                00065 main
+00004C EC?? F???      00066     call    init_lut
+000050 EC?? F???      00067     call    init_tmr0
+000054 EC?? F???      00068     call    init_tmr1
+000058 EC?? F???      00069     call    init_dac
+00005C EF?? F???      00070     goto    loop
                       00071 
-001060                00072 init_dac    
-001060 0EE0           00073     movlw   b'11100000'; enable DAC, DACOUT is RA2
-001062 6E7C           00074     movwf   VREFCON1 
-001064 8EF2           00075     bsf     INTCON,GIE 
-001066 6801           00076     setf    TESTVAR,0;set the testvar variable high cus it'll trigger on 0
-001068 0012           00077     return
+000060                00072 init_dac    
+000060 0EE0           00073     movlw   b'11100000'; enable DAC, DACOUT is RA2
+000062 6E7C           00074     movwf   VREFCON1 
+000064 8EF2           00075     bsf     INTCON,GIE 
+000066 6801           00076     setf    TESTVAR,0;set the testvar variable high cus it'll trigger on 0
+000068 0012           00077     return
                       00078     
-00106A                00079 init_tmr0
+00006A                00079 init_tmr0
                       00080     ;enable timer0 interrupts
-00106A 0EE0           00081     movlw   b'11100000' ;enables timer0 interrupts
-00106C 6EF2           00082     movwf   INTCON
-00106E 0E85           00083     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
-001070 6ED5           00084     movwf   T0CON
-001072 0012           00085     return
+00006A 0EE0           00081     movlw   b'11100000' ;enables timer0 interrupts
+00006C 6EF2           00082     movwf   INTCON
+00006E 0E85           00083     movlw   b'10000101';timer 0 geeft een interrupt met een frequentie van 0.7Hz
+000070 6ED5           00084     movwf   T0CON
+000072 0012           00085     return
                       00086     
-001074                00087 init_tmr1
+000074                00087 init_tmr1
                       00088     ;we willen dat de tmr1 met een frequentie van 62.5 interrupt -> op elke trigger nieuwe DA waarde nem
                             en
-001074 0E27           00089     movlw    b'00100111';stel de waardes van de timer1 in
-001076 6ECD           00090     movwf   T1CON
-001078 84F1           00091     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
-00107A 809D           00092     bsf     PIE1,0; enable tmr1 interrupt
-00107C 809D           00093     bsf     PIE1,0; enable tmr2 interrupt(just to be sure)
-00107E 0012           00094     return
+000074 0E27           00089     movlw    b'00100111';stel de waardes van de timer1 in
+000076 6ECD           00090     movwf   T1CON
+000078 84F1           00091     bsf     INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
+00007A 809D           00092     bsf     PIE1,0; enable tmr1 interrupt
+00007C 809D           00093     bsf     PIE1,0; enable tmr2 interrupt(just to be sure)
+00007E 0012           00094     return
                       00095     
                       00096     
-001080                00097 loop
-001080 EF?? F???      00098     goto    loop
+000080                00097 loop
+000080 EF?? F???      00098     goto    loop
                       00099 
                       00100 ;***********************************************************
                       00101 ; subroutines
                       00102 ;***********************************************************
-001084                00103 init_lut
+000084                00103 init_lut
                       00104     ; FSR1: will go though table of sine samples; starts at address 0x010
-001084 EE10 F010      00105     lfsr    1, 0x010
-001088 0E0F           00106     movlw   D'15'       
-00108A 6E10           00107     movwf   0x10
-00108C 0E15           00108     movlw   D'21'       
-00108E 6E11           00109     movwf   0x11
-001090 0E1A           00110     movlw   D'26'       
-001092 6E12           00111     movwf   0x12
-001094 0E1D           00112     movlw   D'29'       
-001096 6E13           00113     movwf   0x13
-001098 0E1E           00114     movlw   D'30'       
-00109A 6E14           00115     movwf   0x14
-00109C 0E1D           00116     movlw   D'29'       
-00109E 6E15           00117     movwf   0x15
-0010A0 0E1A           00118     movlw   D'26'       
-0010A2 6E16           00119     movwf   0x16
-0010A4 0E15           00120     movlw   D'21'       
-0010A6 6E17           00121     movwf   0x17
-0010A8 0E0F           00122     movlw   D'15'       
-0010AA 6E18           00123     movwf   0x18
-0010AC 0E09           00124     movlw   D'9'        
-0010AE 6E19           00125     movwf   0x19
-0010B0 0E04           00126     movlw   D'4'        
-0010B2 6E1A           00127     movwf   0x1A
-0010B4 0E01           00128     movlw   D'1'        
-0010B6 6E1B           00129     movwf   0x1B
-0010B8 0E00           00130     movlw   D'0'        
-0010BA 6E1C           00131     movwf   0x1C
-0010BC 0E01           00132     movlw   D'1'        
-0010BE 6E1D           00133     movwf   0x1D
-0010C0 0E04           00134     movlw   D'4'        
-0010C2 6E1E           00135     movwf   0x1E
-0010C4 0E09           00136     movlw   D'9'        
-0010C6 6E1F           00137     movwf   0x1F
+000084 EE10 F010      00105     lfsr    1, 0x010
+000088 0E0F           00106     movlw   D'15'       
+00008A 6E10           00107     movwf   0x10
+00008C 0E15           00108     movlw   D'21'       
+00008E 6E11           00109     movwf   0x11
+000090 0E1A           00110     movlw   D'26'       
+000092 6E12           00111     movwf   0x12
+000094 0E1D           00112     movlw   D'29'       
+000096 6E13           00113     movwf   0x13
+000098 0E1E           00114     movlw   D'30'       
+00009A 6E14           00115     movwf   0x14
+00009C 0E1D           00116     movlw   D'29'       
+00009E 6E15           00117     movwf   0x15
+0000A0 0E1A           00118     movlw   D'26'       
+0000A2 6E16           00119     movwf   0x16
+0000A4 0E15           00120     movlw   D'21'       
+0000A6 6E17           00121     movwf   0x17
+0000A8 0E0F           00122     movlw   D'15'       
+0000AA 6E18           00123     movwf   0x18
+0000AC 0E09           00124     movlw   D'9'        
+0000AE 6E19           00125     movwf   0x19
+0000B0 0E04           00126     movlw   D'4'        
+0000B2 6E1A           00127     movwf   0x1A
+0000B4 0E01           00128     movlw   D'1'        
+0000B6 6E1B           00129     movwf   0x1B
+0000B8 0E00           00130     movlw   D'0'        
+0000BA 6E1C           00131     movwf   0x1C
+0000BC 0E01           00132     movlw   D'1'        
+0000BE 6E1D           00133     movwf   0x1D
+0000C0 0E04           00134     movlw   D'4'        
+0000C2 6E1E           00135     movwf   0x1E
+0000C4 0E09           00136     movlw   D'9'        
+0000C6 6E1F           00137     movwf   0x1F
                       00138     
                       00139     ; FSR0: song
-0010C8 EE00 F020      00140     lfsr    0,0x20
-0010CC C??? F020      00141     movff   NOTES,0x20;zet het adress van notes op de juiste plaats
-0010D0 0E01           00142     movlw   D'1';laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
-0010D2 2620           00143     addwf   0x20,1;tel deze bij elkaar op en steek terug in het file register
-0010D4 C??? F021      00144     movff   NOTES,0x21
-0010D8 0E02           00145     movlw   D'2'
-0010DA 2621           00146     addwf   0x21,1
-0010DC C??? F022      00147     movff   NOTES,0x22
-0010E0 0E03           00148     movlw   D'3'
-0010E2 2622           00149     addwf   0x22,1
-0010E4 C??? F023      00150     movff   NOTES,0x23
-0010E8 0E01           00151     movlw   D'1'
-0010EA 2624           00152     addwf   0x24,1
-0010EC C??? F024      00153     movff   NOTES,0x24
-0010F0 C024 F025      00154     movff   0x24,0x25;zelfde noot twee keer achter elkaar
-0010F4 C??? F026      00155     movff   NOTES,0x26
-0010F8 0E02           00156     movlw   D'2'
-0010FA 2626           00157     addwf   0x26,1
+0000C8 EE00 F020      00140     lfsr    0,0x20
+0000CC C??? F020      00141     movff   NOTES,0x20;zet het adress van notes op de juiste plaats
+0000D0 0E01           00142     movlw   D'1';laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
+0000D2 2620           00143     addwf   0x20,1;tel deze bij elkaar op en steek terug in het file register
+0000D4 C??? F021      00144     movff   NOTES,0x21
+0000D8 0E02           00145     movlw   D'2'
+0000DA 2621           00146     addwf   0x21,1
+0000DC C??? F022      00147     movff   NOTES,0x22
+0000E0 0E03           00148     movlw   D'3'
+0000E2 2622           00149     addwf   0x22,1
+0000E4 C??? F023      00150     movff   NOTES,0x23
+0000E8 0E01           00151     movlw   D'1'
+0000EA 2624           00152     addwf   0x24,1
+0000EC C??? F024      00153     movff   NOTES,0x24
+0000F0 C024 F025      00154     movff   0x24,0x25;zelfde noot twee keer achter elkaar
+0000F4 C??? F026      00155     movff   NOTES,0x26
+0000F8 0E02           00156     movlw   D'2'
+0000FA 2626           00157     addwf   0x26,1
                       00158     
                       00159     
                       00160     
-0010FC 0012           00161     return
+0000FC 0012           00161     return
                       00162     
                       00163 ;***********************************************************
                       00164 ; interrupt handling
                       00165 ;***********************************************************
                       00166 
-0010FE                00167 inter_high
-0010FE B4F2           00168     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
-001100 EC?? F???      00169     call ih_tmr0
-001104 B09E           00170     btfsc   PIR1,0  ;will be high when tmr1 has given an interrupt
-001106 EC?? F???      00171     call ih_tmr1
-00110A 0010           00172     retfie
+0000FE                00167 inter_high
+0000FE B4F2           00168     btfsc   INTCON,2    ;will be high if timer0 has given interrupt
+000100 EC?? F???      00169     call ih_tmr0
+000104 B09E           00170     btfsc   PIR1,0  ;will be high when tmr1 has given an interrupt
+000106 EC?? F???      00171     call ih_tmr1
+00010A 0010           00172     retfie
                       00173     
-00110C                00174 reset_sin_wave
-00110C EE10 F010      00175     lfsr    1, 0x010
-001110 EF?? F???      00176     goto    schrijf_op_dac
-001114                00177 schrijf_op_dac
-001114 50E6           00178     movf    POSTINC1,0; zet de waarde van de de sfr1 pointer in de work register en increment hem
-001116 6E7B           00179     movwf   VREFCON2;start de dac met de waarde uit de pointer
-001118 0012           00180     return
-00111A                00181 ih_tmr1
+00010C                00174 reset_sin_wave
+00010C EE10 F010      00175     lfsr    1, 0x010
+000110 EF?? F???      00176     goto    schrijf_op_dac
+000114                00177 schrijf_op_dac
+000114 50E6           00178     movf    POSTINC1,0; zet de waarde van de de sfr1 pointer in de work register en increment hem
+000116 6E7B           00179     movwf   VREFCON2;start de dac met de waarde uit de pointer
+000118 0012           00180     return
+00011A                00181 ih_tmr1
                       00182     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
                       00183     ;haal de gewenste waarde op
-00111A 50E1           00184     movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
-00111C 0A20           00185     xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
-00111E 6E01           00186     movwf   TESTVAR
-001120 6601           00187     tstfsz  TESTVAR;als 0, de volgende instructie discarded
-001122 EF?? F???      00188     goto    schrijf_op_dac
-001126 EF?? F???      00189     goto    reset_sin_wave;zet de sinus terug naar 0
-00112A 0012           00190     return
+00011A 50E1           00184     movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
+00011C 0A20           00185     xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
+00011E 6E01           00186     movwf   TESTVAR
+000120 6601           00187     tstfsz  TESTVAR;als 0, de volgende instructie discarded
+000122 EF?? F???      00188     goto    schrijf_op_dac
+000126 EF?? F???      00189     goto    reset_sin_wave;zet de sinus terug naar 0
+00012A 0012           00190     return
                       00191 
-00112C                00192 ih_tmr0
-00112C 728B           00193     btg     LATC,1; toggle RC1 led
+00012C                00192 ih_tmr0
+00012C 728B           00193     btg     LATC,1; toggle RC1 led
                       00194     ;make tm1 play a different frequency according to the correct note
-00112E 0E0F           00195     movlw   high INDF0;lees het adress van de juiste noot en zet in de high byte van de tablepointer
-001130 6EF7           00196     movwf   TBLPTRH
-001132 0EEE           00197     movlw   low POSTINC0;lees de rest en increment het adress zodat we bij de volgende read de volgende 
-                            noot lezen
-001134 6EF6           00198     movwf   TBLPTRL
-001136 0008           00199     tblrd*;  ;  lees de waardes op de plaats van de noot
-001138 CFF5 FFCF      00200     movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
-00113C 0008           00201     tblrd*; ; lees de high bit
-00113E CFF5 FFCE      00202     movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
-                      00203     
+00012E CFEE FFF6      00195     movff   POSTINC0,TBLPTRL; zet het adress van de juiste nood in de table pointer
+000132 0009           00196     tblrd*+;  ;  lees de waardes op de plaats van de noot
+000134 CFF5 FFCF      00197     movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
+000138 0009           00198     tblrd*+; ; lees de high bit
+00013A CFF5 FFCE      00199     movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
+                      00200     
+                      00201     
+00013E 94F2           00202     bcf     INTCON,2;clear the flag bit
+000140 0012           00203     return
                       00204     
-001142 94F2           00205     bcf     INTCON,2;clear the flag bit
-001144 0012           00206     return
-                      00207     
-001146                00208 inter_low
-001146 0000           00209     nop
-001148 0010           00210     retfie
-                      00211 ;***********************************************************
-                      00212 ; table
-                      00213 ;***********************************************************
-                      00214     
-00114A                00215 NOTES ;TMR1H TM1L
-00114A 0000           00216     DB 0x00, 0x00   ;Silence?
-                      00217     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
-00114C EEFF           00218     DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
-00114E F0FF           00219     DB 0xFF, 0xF0   ;D 1174,66 Hz
-001150 F8FF           00220     DB 0xFF, 0xF8   ;E 1318,51 Hz
-001152 FAFF           00221     DB 0xFF, 0xFA   ;F 1396,91 Hz
-001154 FFFF           00222     DB 0xFF, 0xFF   ;G 1567,98 Hz
-001156 DEFF           00223     DB 0xFF, 0xDE   ;A 1760 Hz
-                      00224     
-                      00225     END
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  14:43:15         PAGE  2
+000142                00205 inter_low
+000142 0000           00206     nop
+000144 0010           00207     retfie
+                      00208 ;***********************************************************
+                      00209 ; table
+                      00210 ;***********************************************************
+                      00211     
+000146                00212 NOTES ;TMR1H TM1L
+000146 0000           00213     DB 0x00, 0x00   ;Silence?
+                      00214     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
+000148 EEFF           00215     DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
+00014A F0FF           00216     DB 0xFF, 0xF0   ;D 1174,66 Hz
+00014C F8FF           00217     DB 0xFF, 0xF8   ;E 1318,51 Hz
+00014E FAFF           00218     DB 0xFF, 0xFA   ;F 1396,91 Hz
+000150 FFFF           00219     DB 0xFF, 0xFF   ;G 1567,98 Hz
+000152 DEFF           00220     DB 0xFF, 0xDE   ;A 1760 Hz
+                      00221     
+                      00222     END
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  14:56:31         PAGE  2
 
 
 SYMBOL TABLE
@@ -674,7 +670,7 @@ MC2OUT                            00000006
 MSSP1MD                           00000006
 MSSPMD                            00000006
 N                                 00000004
-NOTES                             0000114A
+NOTES                             00000146
 NOT_BOR                           00000000
 NOT_DONE                          00000001
 NOT_PD                            00000002
@@ -923,7 +919,7 @@ SSPOV                             00000006
 SSPSTAT                           00000FC7
 STALLIE                           00000005
 STALLIF                           00000005
-START                             00001020
+START                             00000020
 STATUS                            00000FD8
 STCON                             00000FB5
 STEN                              00000007
@@ -1032,12 +1028,10 @@ TMR1GIE                           00000000
 TMR1GIF                           00000000
 TMR1GIP                           00000000
 TMR1H                             00000FCF
-TMR1HVAR                          00000002
 TMR1IE                            00000000
 TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
-TMR1LVAR                          00000003
 TMR1MD                            00000000
 TMR1ON                            00000000
 TMR2                              00000FBC
@@ -1330,18 +1324,18 @@ _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
-ih_tmr0                           0000112C
-ih_tmr1                           0000111A
-init_dac                          00001060
-init_lut                          00001084
-init_tmr0                         0000106A
-init_tmr1                         00001074
-inter_high                        000010FE
-inter_low                         00001146
-loop                              00001080
-main                              0000104C
-reset_sin_wave                    0000110C
-schrijf_op_dac                    00001114
+ih_tmr0                           0000012C
+ih_tmr1                           0000011A
+init_dac                          00000060
+init_lut                          00000084
+init_tmr0                         0000006A
+init_tmr1                         00000074
+inter_high                        000000FE
+inter_low                         00000142
+loop                              00000080
+main                              0000004C
+reset_sin_wave                    0000010C
+schrijf_op_dac                    00000114
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed

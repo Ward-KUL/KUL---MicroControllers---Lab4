@@ -9,7 +9,7 @@
 ; Reset Vector
 ;***********************************************************
 
-    ORG     0x1000	; Reset Vector
+    ORG     0x0000	; Reset Vector
 			; When debugging:0x0000; when loading: 0x1000
     GOTO    START
 
@@ -17,21 +17,21 @@
 ; Interrupt Vector
 ;***********************************************************
 
-    ORG     0x1008	; Interrupt Vector HIGH priority
+    ORG     0x0008	; Interrupt Vector HIGH priority
     GOTO    inter_high	; When debugging:0x008; when loading: 0x1008
-    ORG     0x1018	; Interrupt Vector LOW priority
+    ORG     0x0018	; Interrupt Vector LOW priority
     GOTO    inter_low	; When debugging:0x0008; when loading: 0x1018
 
 ;***********************************************************
     ;File register
 TESTVAR	equ 0x01;variabele om testresultaat in te steken
-TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
-TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
+;TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
+;TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
 ;***********************************************************
 ; Program Code Starts Here
 ;***********************************************************
 
-    ORG     0x1020	; When debugging:0x020; when loading: 0x1020
+    ORG     0x0020	; When debugging:0x020; when loading: 0x1020
 
 START
     movlw   0x80	; load value 0x80 in work register
@@ -192,13 +192,10 @@ ih_tmr1
 ih_tmr0
     btg	    LATC,1; toggle RC1 led
     ;make tm1 play a different frequency according to the correct note
-    movlw   high INDF0;lees het adress van de juiste noot en zet in de high byte van de tablepointer
-    movwf   TBLPTRH
-    movlw   low	POSTINC0;lees de rest en increment het adress zodat we bij de volgende read de volgende noot lezen
-    movwf   TBLPTRL
-    tblrd*;  lees de waardes op de plaats van de noot
+    movff   POSTINC0,TBLPTRL; zet het adress van de juiste nood in de table pointer
+    tblrd*+;  lees de waardes op de plaats van de noot
     movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
-    tblrd*; lees de high bit
+    tblrd*+; lees de high bit
     movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
     
     
