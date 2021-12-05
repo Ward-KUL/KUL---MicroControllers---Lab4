@@ -4,8 +4,7 @@
     list p=18F25k50, r=hex, n=0
     #include <p18f25k50.inc>	; file to provide register definitions for the specific processor (a lot of equ)
 
-; File registers
-TESTVAR	equ 0x01;variabele om testresultaat in te steken
+
 ;***********************************************************
 ; Reset Vector
 ;***********************************************************
@@ -25,7 +24,9 @@ TESTVAR	equ 0x01;variabele om testresultaat in te steken
 
 ;***********************************************************
     ;File register
-;DAVAL equ 0x20; variable to store digital analog conversion
+TESTVAR	equ 0x01;variabele om testresultaat in te steken
+TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
+TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
 ;***********************************************************
 ; Program Code Starts Here
 ;***********************************************************
@@ -67,7 +68,6 @@ main
     call    init_tmr1
     call    init_dac
     goto    loop
-    ;call    init_lut
 
 init_dac    
     movlw   b'11100000'; enable DAC, DACOUT is RA2
@@ -137,7 +137,26 @@ init_lut
     movwf   0x1F
     
     ; FSR0: song
-    ;complete me
+    lfsr    0,0x20
+    movff   NOTES,0x20;zet het adress van notes op de juiste plaats
+    movlw   D'1';laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
+    addwf   0x20,1;tel deze bij elkaar op en steek terug in het file register
+    movff   NOTES,0x21
+    movlw   D'2'
+    addwf   0x21,1
+    movff   NOTES,0x22
+    movlw   D'3'
+    addwf   0x22,1
+    movff   NOTES,0x23
+    movlw   D'1'
+    addwf   0x24,1
+    movff   NOTES,0x24
+    movff   0x24,0x25;zelfde noot twee keer achter elkaar
+    movff   NOTES,0x26
+    movlw   D'2'
+    addwf   0x26,1
+    
+    
     
     return
     
@@ -172,6 +191,17 @@ ih_tmr1
 
 ih_tmr0
     btg	    LATC,1; toggle RC1 led
+    ;make tm1 play a different frequency according to the correct note
+    movlw   high INDF0;lees het adress van de juiste noot en zet in de high byte van de tablepointer
+    movwf   TBLPTRH
+    movlw   low	POSTINC0;lees de rest en increment het adress zodat we bij de volgende read de volgende noot lezen
+    movwf   TBLPTRL
+    tblrd*;  lees de waardes op de plaats van de noot
+    movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
+    tblrd*; lees de high bit
+    movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
+    
+    
     bcf	    INTCON,2;clear the flag bit
     return
     
@@ -184,8 +214,12 @@ inter_low
     
 NOTES ;TMR1H TM1L
     DB 0x00, 0x00   ;Silence?
-    ;calculate the correct values
-    DB 0xFF, 0xEE   ;C = do
-    ;...
+    ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
+    DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
+    DB 0xFF, 0xF0   ;D 1174,66 Hz
+    DB 0xFF, 0xF8   ;E 1318,51 Hz
+    DB 0xFF, 0xFA   ;F 1396,91 Hz
+    DB 0xFF, 0xFF   ;G 1567,98 Hz
+    DB 0xFF, 0xDE   ;A 1760 Hz
     
     END
