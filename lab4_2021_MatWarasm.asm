@@ -25,8 +25,8 @@
 ;***********************************************************
     ;File register
 TESTVAR	equ 0x01;variabele om testresultaat in te steken
-;TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
-;TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
+TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
+TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
 ;***********************************************************
 ; Program Code Starts Here
 ;***********************************************************
@@ -183,9 +183,12 @@ reset_sin_wave
 schrijf_op_dac
     movf    POSTINC1,0; zet de waarde van de de sfr1 pointer in de work register en increment hem
     movwf   VREFCON2;start de dac met de waarde uit de pointer
+    bcf	    PIR1,TMR1IF;clear de timer1 bit nog
     return
 ih_tmr1
-    ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
+    ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de dac zodat we pracht sinus krijgen
+    movff   TMR1HVAR,TMR1H;terug de tmr1 op de juiste waarde zetten zodat we de juitse frequentie aanhouden
+    movff   TMR1LVAR,TMR1L
     ;haal de gewenste waarde op
     movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
     xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
@@ -214,9 +217,9 @@ loop_table_read
 
 read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan
     tblrd*+;  lees de waardes op de plaats van de noot
-    movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
+    movff   TABLAT,TMR1HVAR;zet de waarde van de lat de high bit van tmr1
     tblrd*+; lees de high bit
-    movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
+    movff   TABLAT,TMR1LVAR; zet de waarde van de lat in de low bit van tmr1
       
     bcf	    INTCON,2;clear the flag bit
     return

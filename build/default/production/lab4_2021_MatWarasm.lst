@@ -1,4 +1,4 @@
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  15:27:13         PAGE  1
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  15:51:16         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -42,8 +42,8 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00025 ;***********************************************************
                       00026     ;File register
   00000001            00027 TESTVAR equ 0x01;variabele om testresultaat in te steken
-                      00028 ;TMR1HVAR       equ 0x02;variabele voor de tmr1 high bit in op te slaan
-                      00029 ;TMR1LVAR       equ 0x03;variabele voor de tmr1 low bit in op te slaan
+  00000002            00028 TMR1HVAR        equ 0x02;variabele voor de tmr1 high bit in op te slaan
+  00000003            00029 TMR1LVAR        equ 0x03;variabele voor de tmr1 low bit in op te slaan
                       00030 ;***********************************************************
                       00031 ; Program Code Starts Here
                       00032 ;***********************************************************
@@ -204,64 +204,69 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00110E                00183 schrijf_op_dac
 00110E 50E6           00184     movf    POSTINC1,0; zet de waarde van de de sfr1 pointer in de work register en increment hem
 001110 6E7B           00185     movwf   VREFCON2;start de dac met de waarde uit de pointer
-001112 0012           00186     return
-001114                00187 ih_tmr1
-                      00188     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de geluid
-                      00189     ;haal de gewenste waarde op
-001114 50E1           00190     movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
-001116 0A20           00191     xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
-001118 6E01           00192     movwf   TESTVAR
-00111A 6601           00193     tstfsz  TESTVAR;als 0, de volgende instructie discarded
-00111C EF?? F???      00194     goto    schrijf_op_dac
-001120 EF?? F???      00195     goto    reset_sin_wave;zet de sinus terug naar 0
-001124 0012           00196     return
-                      00197 
-001126                00198 ih_tmr0
-001126 728B           00199     btg     LATC,1; toggle RC1 led
-                      00200     ;make tm1 play a different frequency according to the correct note
-001128 EC?? F???      00201     call init_tblptr
-                      00202     ;een while loop die elke keer een tblread doet enzo naar de juiste plaats beweegt tot we in table la
+001112 909E           00186     bcf     PIR1,TMR1IF;clear de timer1 bit nog
+001114 0012           00187     return
+001116                00188 ih_tmr1
+                      00189     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de dac zodat we pracht sinus krij
+                            gen
+001116 C002 FFCF      00190     movff   TMR1HVAR,TMR1H;terug de tmr1 op de juiste waarde zetten zodat we de juitse frequentie aanhou
+                            den
+00111A C003 FFCE      00191     movff   TMR1LVAR,TMR1L
+                      00192     ;haal de gewenste waarde op
+00111E 50E1           00193     movf    FSR1L,0;zet het adress waar de pointer naar wijst in de working register
+001120 0A20           00194     xorlw   0x20; wanneer we voorbij 0x20 zitten moeten we terug in het begin beginnen
+001122 6E01           00195     movwf   TESTVAR
+001124 6601           00196     tstfsz  TESTVAR;als 0, de volgende instructie discarded
+001126 EF?? F???      00197     goto    schrijf_op_dac
+00112A EF?? F???      00198     goto    reset_sin_wave;zet de sinus terug naar 0
+00112E 0012           00199     return
+                      00200 
+001130                00201 ih_tmr0
+001130 728B           00202     btg     LATC,1; toggle RC1 led
+                      00203     ;make tm1 play a different frequency according to the correct note
+001132 EC?? F???      00204     call init_tblptr
+                      00205     ;een while loop die elke keer een tblread doet enzo naar de juiste plaats beweegt tot we in table la
                             t de juiste waarde hebben staan
-00112C 50EE           00203     movf    POSTINC0,0;zet de hoeveelheid aan noten dat we moeten skippen in de WREG
-00112E 66E8           00204     tstfsz  WREG,0;als wreg al nu is moeten we geen noten overslaan
-001130 EF?? F???      00205     goto loop_table_read 
-001134 EF?? F???      00206     goto read_from_table
-                      00207     
-001138                00208 loop_table_read
-001138 0009           00209     tblrd*+;;skip een noot
-00113A 0009           00210     tblrd*+
-00113C 2CE8           00211     decfsz  WREG,0;we gaan naar beneden tot we genoeg noten hebben geskipped
-00113E EF?? F???      00212     goto loop_table_read
-001142 EF?? F???      00213     goto read_from_table
-                      00214 
-001146                00215 read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan
-001146 0009           00216     tblrd*+;  ;  lees de waardes op de plaats van de noot
-001148 CFF5 FFCF      00217     movff   TABLAT,TMR1H;zet de waarde van de lat de high bit van tmr1
-00114C 0009           00218     tblrd*+; ; lees de high bit
-00114E CFF5 FFCE      00219     movff   TABLAT,TMR1L; zet de waarde van de lat in de low bit van tmr1
-                      00220       
-001152 94F2           00221     bcf     INTCON,2;clear the flag bit
-001154 0012           00222     return
-                      00223     
-001156                00224 inter_low
-001156 0000           00225     nop
-001158 0010           00226     retfie
-                      00227 ;***********************************************************
-                      00228 ; table
-                      00229 ;***********************************************************
-                      00230     
-00115A                00231 NOTES ;TMR1H TM1L
-00115A 0000           00232     DB 0x00, 0x00   ;Silence?
-                      00233     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
-00115C EEFF           00234     DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
-00115E F0FF           00235     DB 0xFF, 0xF0   ;D 1174,66 Hz
-001160 F8FF           00236     DB 0xFF, 0xF8   ;E 1318,51 Hz
-001162 FAFF           00237     DB 0xFF, 0xFA   ;F 1396,91 Hz
-001164 FFFF           00238     DB 0xFF, 0xFF   ;G 1567,98 Hz
-001166 DEFF           00239     DB 0xFF, 0xDE   ;A 1760 Hz
-                      00240     
-                      00241     END
-MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  15:27:13         PAGE  2
+001136 50EE           00206     movf    POSTINC0,0;zet de hoeveelheid aan noten dat we moeten skippen in de WREG
+001138 66E8           00207     tstfsz  WREG,0;als wreg al nu is moeten we geen noten overslaan
+00113A EF?? F???      00208     goto loop_table_read 
+00113E EF?? F???      00209     goto read_from_table
+                      00210     
+001142                00211 loop_table_read
+001142 0009           00212     tblrd*+;;skip een noot
+001144 0009           00213     tblrd*+
+001146 2CE8           00214     decfsz  WREG,0;we gaan naar beneden tot we genoeg noten hebben geskipped
+001148 EF?? F???      00215     goto loop_table_read
+00114C EF?? F???      00216     goto read_from_table
+                      00217 
+001150                00218 read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan
+001150 0009           00219     tblrd*+;  ;  lees de waardes op de plaats van de noot
+001152 CFF5 F002      00220     movff   TABLAT,TMR1HVAR;zet de waarde van de lat de high bit van tmr1
+001156 0009           00221     tblrd*+; ; lees de high bit
+001158 CFF5 F003      00222     movff   TABLAT,TMR1LVAR; zet de waarde van de lat in de low bit van tmr1
+                      00223       
+00115C 94F2           00224     bcf     INTCON,2;clear the flag bit
+00115E 0012           00225     return
+                      00226     
+001160                00227 inter_low
+001160 0000           00228     nop
+001162 0010           00229     retfie
+                      00230 ;***********************************************************
+                      00231 ; table
+                      00232 ;***********************************************************
+                      00233     
+001164                00234 NOTES ;TMR1H TM1L
+001164 0000           00235     DB 0x00, 0x00   ;Silence?
+                      00236     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
+001166 EEFF           00237     DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
+001168 F0FF           00238     DB 0xFF, 0xF0   ;D 1174,66 Hz
+00116A F8FF           00239     DB 0xFF, 0xF8   ;E 1318,51 Hz
+00116C FAFF           00240     DB 0xFF, 0xFA   ;F 1396,91 Hz
+00116E FFFF           00241     DB 0xFF, 0xFF   ;G 1567,98 Hz
+001170 DEFF           00242     DB 0xFF, 0xDE   ;A 1760 Hz
+                      00243     
+                      00244     END
+MPASM 5.87           LAB4_2021_MATWARASM.ASM   12-5-2021  15:51:16         PAGE  2
 
 
 SYMBOL TABLE
@@ -691,7 +696,7 @@ MC2OUT                            00000006
 MSSP1MD                           00000006
 MSSPMD                            00000006
 N                                 00000004
-NOTES                             0000115A
+NOTES                             00001164
 NOT_BOR                           00000000
 NOT_DONE                          00000001
 NOT_PD                            00000002
@@ -1049,10 +1054,12 @@ TMR1GIE                           00000000
 TMR1GIF                           00000000
 TMR1GIP                           00000000
 TMR1H                             00000FCF
+TMR1HVAR                          00000002
 TMR1IE                            00000000
 TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
+TMR1LVAR                          00000003
 TMR1MD                            00000000
 TMR1ON                            00000000
 TMR2                              00000FBC
@@ -1343,19 +1350,19 @@ _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
-ih_tmr0                           00001126
-ih_tmr1                           00001114
+ih_tmr0                           00001130
+ih_tmr1                           00001116
 init_dac                          00001064
 init_lut                          00001096
 init_tblptr                       00001084
 init_tmr0                         0000106E
 init_tmr1                         00001078
 inter_high                        000010F8
-inter_low                         00001156
+inter_low                         00001160
 loop                              00001092
-loop_table_read                   00001138
+loop_table_read                   00001142
 main                              0000104C
-read_from_table                   00001146
+read_from_table                   00001150
 reset_sin_wave                    00001106
 schrijf_op_dac                    0000110E
 
