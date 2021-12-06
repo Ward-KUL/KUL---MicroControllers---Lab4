@@ -27,6 +27,7 @@
 TESTVAR	equ 0x01;variabele om testresultaat in te steken
 TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
 TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
+STARTSONG	equ 0x04;variable which is 1 if we want to start the music
 ;***********************************************************
 ; Program Code Starts Here
 ;***********************************************************
@@ -54,6 +55,7 @@ START
     clrf    LATC	; Initialize PORTC by clearing output data latches
     movlw   0x01	; Value used to initialize data direction
     movwf   TRISC	; Set RC0 as input
+    bcf	    STARTSONG,0 ; clear the start song bit
     
     
 
@@ -106,6 +108,9 @@ init_tblptr
     
     
 loop
+    btfss   PORTC,0;als RC0 is ingedrukt zet variabele om nummer te starten hoog(dus slaag hoog zetten niet over)
+    bsf     STARTSONG ,0
+    movff   STARTSONG,LATB;
     goto    loop
 
 ;***********************************************************
@@ -186,6 +191,10 @@ schrijf_op_dac
     bcf	    PIR1,TMR1IF;clear de timer1 bit nog
     return
 ih_tmr1
+    bcf	    PIR1,TMR1IF;clear de timer1 bit nog
+    ;als de song bit hoog is -> skip
+    btfss   STARTSONG,0
+    return
     ;per tmr1 interrupt moet ge een nieuwe analoge waarde neerpoten in de dac zodat we pracht sinus krijgen
     movff   TMR1HVAR,TMR1H;terug de tmr1 op de juiste waarde zetten zodat we de juitse frequentie aanhouden
     movff   TMR1LVAR,TMR1L
@@ -199,6 +208,9 @@ ih_tmr1
     return
 
 ih_tmr0
+    bcf	    INTCON,2;clear the flag bit
+    btfss   STARTSONG,0;als de start variabele hoog is gezet skippen we de volgende return instructie die ervoor zorgt dat er niks wordt gedaan
+    return
     btg	    LATC,1; toggle RC1 led
     ;make tm1 play a different frequency according to the correct note
     call init_tblptr
