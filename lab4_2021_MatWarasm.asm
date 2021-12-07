@@ -9,7 +9,7 @@
 ; Reset Vector
 ;***********************************************************
 
-    ORG     0x1000	; Reset Vector
+    ORG     0x0000	; Reset Vector
 			; When debugging:0x0000; when loading: 0x1000
     GOTO    START
 
@@ -17,9 +17,9 @@
 ; Interrupt Vector
 ;***********************************************************
 
-    ORG     0x1008	; Interrupt Vector HIGH priority
+    ORG     0x0008	; Interrupt Vector HIGH priority
     GOTO    inter_high	; When debugging:0x008; when loading: 0x1008
-    ORG     0x1018	; Interrupt Vector LOW priority
+    ORG     0x0018	; Interrupt Vector LOW priority
     GOTO    inter_low	; When debugging:0x0008; when loading: 0x1018
 
 ;***********************************************************
@@ -29,11 +29,12 @@ TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
 TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
 TMR0HVAR	equ 0x05;variabele voor de tmr0 high bit
 STARTSONG	equ 0x04;variable which is 1 if we want to start the music
-;***********************************************************
+MULT	    equ	0x05;
+	;***********************************************************
 ; Program Code Starts Here
 ;***********************************************************
 
-    ORG     0x1020	; When debugging:0x020; when loading: 0x1020
+    ORG     0x0020	; When debugging:0x020; when loading: 0x1020
 
 START
     movlw   0x80	; load value 0x80 in work register
@@ -253,17 +254,25 @@ ih_tmr0
     ;make tm1 play a different frequency according to the correct note
     call init_tblptr
     ;een while loop die elke keer een tblread doet enzo naar de juiste plaats beweegt tot we in table lat de juiste waarde hebben staan
-    movf    POSTINC0,0;zet de hoeveelheid aan noten dat we moeten skippen in de WREG
-    tstfsz  WREG,0;als wreg al nu is moeten we geen noten overslaan
-    goto loop_table_read 
+    movff    POSTINC0,MULT;zet de hoeveelheid aan noten dat we moeten skippen in de WREG
+    ;tstfsz  WREG,0;als wreg al nu is moeten we geen noten overslaan
+    ;goto loop_table_read 
+    movlw   D'3';we willen met 3 vermenigvulidgen want de tblptr moet per keer 3 vakken worden omghoog gezet
+    mulwf   MULT
+    movf    PRODL,0;zet het resultaat van het product in de low byte
+    addwf   TBLPTRL,1
+    clrf    WREG;clear wreg and add caryy bit if present to tblptrh
+    addwfc  TBLPTRH,1
+    bcf	    STATUS,1;and clear the carry bit again
     goto read_from_table
     
 loop_table_read
-    tblrd*+;skip een noot
-    tblrd*+
-    tblrd*+
-    decfsz  WREG,0;we gaan naar beneden tot we genoeg noten hebben geskipped
-    goto loop_table_read
+;    tblrd*+;skip een noot
+;    tblrd*+
+;    tblrd*+
+;    decfsz  WREG,0;we gaan naar beneden tot we genoeg noten hebben geskipped
+;    goto loop_table_read
+    
     goto read_from_table
 
 read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan\
@@ -285,14 +294,14 @@ inter_low
 ;***********************************************************
     
 NOTES ;TMR0H TMR1H TM1L
-    DB  0x00, 0x00   ;Silence?
+    DB  0x00, 0x00, 0x00   ;Silence?
     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
-    DB 0xFF, 0x00   ;C = do (65518) zou 1046,5 Hz moeten zijn
-    DB 0xFF, 0xA0   ;D 1174,66 Hz
-    DB 0xFF, 0x00   ;E 1318,51 Hz
-    DB 0xFF, 0xA0   ;F 1396,91 Hz
-    DB 0xFF, 0x00   ;G 1567,98 Hz
-    DB 0xFF, 0xA0   ;A 1760 Hz
+    DB 0x00,0xFF, 0x00   ;C = do (65518) zou 1046,5 Hz moeten zijn
+    DB 0x00,0xFF, 0xA0   ;D 1174,66 Hz
+    DB 0x00,0xFF, 0x00   ;E 1318,51 Hz
+    DB 0x00,0xFF, 0xA0   ;F 1396,91 Hz
+    DB 0x00,0xFF, 0x00   ;G 1567,98 Hz
+    DB 0x00,0xFF, 0xA0   ;A 1760 Hz
     ;halve noten
     DB 0x80, 0xFF, 0xEE   ;C = do	7
     DB 0x80, 0xFF, 0xF0   ;D 1174,66 Hz	8
