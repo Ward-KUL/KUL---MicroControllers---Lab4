@@ -1,5 +1,5 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Mon Dec 06 12:31:42 2021
+Linker Map File - Created Tue Dec 07 16:48:27 2021
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -8,7 +8,7 @@ Linker Map File - Created Mon Dec 06 12:31:42 2021
                    .cinit    romdata   0x001004    program   0x000002
                    .org_1       code   0x001008    program   0x000004
                    .org_2       code   0x001018    program   0x000004
-                   .org_3       code   0x001020    program   0x000168
+                   .org_3       code   0x001020    program   0x000192
 
 
 
@@ -18,31 +18,31 @@ Linker Map File - Created Mon Dec 06 12:31:42 2021
                             0x001000    0x001005      
                             0x001008    0x00100b      
                             0x001018    0x00101b      
-                            0x001020    0x001187      
-            374 out of 33048 program addresses used, program memory utilization is 1%
+                            0x001020    0x0011b1      
+            416 out of 33048 program addresses used, program memory utilization is 1%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                    NOTES   0x00117a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                    NOTES   0x0011a4    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
                     START   0x001020    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                  ih_tmr0   0x001140    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                  ih_tmr1   0x001120    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                 init_dac   0x001066    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                 init_lut   0x0010a0    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-              init_tblptr   0x001086    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                init_tmr0   0x001070    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                init_tmr1   0x00107a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-               inter_high   0x001102    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                inter_low   0x001176    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                     loop   0x001094    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-          loop_table_read   0x001158    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                     main   0x00104e    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-          read_from_table   0x001166    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-           reset_sin_wave   0x001110    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-           schrijf_op_dac   0x001118    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                  ih_tmr0   0x00116a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                  ih_tmr1   0x00114a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                 init_dac   0x00106a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                 init_lut   0x0010a4    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+              init_tblptr   0x00108a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                init_tmr0   0x001074    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                init_tmr1   0x00107e    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+               inter_high   0x00112c    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                inter_low   0x0011a0    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                     loop   0x001098    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+          loop_table_read   0x001182    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                     main   0x001052    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+          read_from_table   0x001190    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+           reset_sin_wave   0x00113a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+           schrijf_op_dac   0x001142    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
 
 
 
@@ -50,21 +50,21 @@ Linker Map File - Created Mon Dec 06 12:31:42 2021
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
                     START   0x001020    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                     main   0x00104e    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                 init_dac   0x001066    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                init_tmr0   0x001070    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                init_tmr1   0x00107a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-              init_tblptr   0x001086    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                     loop   0x001094    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                 init_lut   0x0010a0    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-               inter_high   0x001102    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-           reset_sin_wave   0x001110    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-           schrijf_op_dac   0x001118    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                  ih_tmr1   0x001120    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                  ih_tmr0   0x001140    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-          loop_table_read   0x001158    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-          read_from_table   0x001166    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                inter_low   0x001176    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
-                    NOTES   0x00117a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                     main   0x001052    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                 init_dac   0x00106a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                init_tmr0   0x001074    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                init_tmr1   0x00107e    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+              init_tblptr   0x00108a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                     loop   0x001098    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                 init_lut   0x0010a4    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+               inter_high   0x00112c    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+           reset_sin_wave   0x00113a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+           schrijf_op_dac   0x001142    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                  ih_tmr1   0x00114a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                  ih_tmr0   0x00116a    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+          loop_table_read   0x001182    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+          read_from_table   0x001190    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                inter_low   0x0011a0    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
+                    NOTES   0x0011a4    program     static C:\Users\Ward\OneDrive\1school\1 KUL\3e Bachelor\1e Semester\Microcontrollers\Labo's\Lab4\Lab4_W.X\lab4_2021_MatWarasm.asm
 
 

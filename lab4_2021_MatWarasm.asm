@@ -44,8 +44,8 @@ START
     clrf    LATA 	; Initialize PORTA by clearing output data latches
     movlw   0x00 	; Value used to initialize data direction, only RA2 moet als output worden gebruikt used to be 0xFF
     movwf   TRISA 	; Set PORTA as output
-    ;movlw   b'00000100' 	; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be analog (used to be 0x00)
-    ;movwf   ANSELA	
+    movlw   0x00 	; Configure A/D for digital inputs 0000 1111, onlry RA2 needs to be analog (used to be 0x00)
+    movwf   ANSELA	
     clrf    LATA	; clear A output latch
     movlw   0x00	; Configure comparators for digital input
     movwf   CM1CON0
@@ -89,7 +89,7 @@ init_tmr0
     
 init_tmr1
     ;we willen dat de tmr1 met een frequentie van 62.5 interrupt -> op elke trigger nieuwe DA waarde nemen
-    movlw    b'00100111';stel de waardes van de timer1 in
+    movlw    b'01000111';stel de waardes van de timer1 in
     movwf   T1CON
     bsf	    INTCON2,2;set bit 2, this set TMR0 interrupt to high priority
     bsf	    PIE1,0; enable tmr1 interrupt
@@ -155,17 +155,29 @@ init_lut
     ; FSR0: song
     lfsr    0,0x20
     
-    movlw   D'1';laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
-    movwf   0x20
-    movlw   D'2'
-    movwf   0x21
-    movlw   D'3'
-    movwf   0x22
-    movlw   D'1'
-    movwf   0x24
-    movff   0x24,0x25;zelfde noot twee keer achter elkaar
-    movlw   D'2'
-    movwf   0x26
+    movlw   D'1';C laat in work register hoeveel plekken we achter notes de juite node kunnen vinden
+    movwf   0x20;C
+    movlw   D'2' ;D
+    movwf   0x21;D
+    movlw   D'3';E
+    movwf   0x22;E
+    movff   0x20,0x23;C
+    movwf   0x23,0x24;C
+    movff   0x24,0x25;Dzelfde noot twee keer achter elkaar
+    movff   0x22,0x26;E
+    movff   0x20,0x27;C
+    movff   0x22,0x28;E
+    movlw   D'4';F
+    movwf   0x29;F
+    movlw   D'5';G
+    movwf   0x30;G
+    movlw   D'0'
+    movwf   0x31;Silence
+    movff   0x22,0x32;E
+    movff   0x29,0x33;F
+    movff   0x30,0x34;G
+    movff   0x31,0x35;Silence
+	
     
     
     
@@ -246,11 +258,11 @@ inter_low
 NOTES ;TMR1H TM1L
     DB 0x00, 0x00   ;Silence?
     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
-    DB 0xFF, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
-    DB 0xFF, 0xF0   ;D 1174,66 Hz
-    DB 0xFF, 0xF8   ;E 1318,51 Hz
-    DB 0xFF, 0xFA   ;F 1396,91 Hz
-    DB 0xFF, 0xFF   ;G 1567,98 Hz
+    DB 0x30, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
+    DB 0x60, 0xF0   ;D 1174,66 Hz
+    DB 0x80, 0xF8   ;E 1318,51 Hz
+    DB 0xA0, 0xFA   ;F 1396,91 Hz
+    DB 0xD0, 0xFF   ;G 1567,98 Hz
     DB 0xFF, 0xDE   ;A 1760 Hz
     
     END
