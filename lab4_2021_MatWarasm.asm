@@ -27,6 +27,7 @@
 TESTVAR	equ 0x01;variabele om testresultaat in te steken
 TMR1HVAR	equ 0x02;variabele voor de tmr1 high bit in op te slaan
 TMR1LVAR	equ 0x03;variabele voor de tmr1 low bit in op te slaan
+TMR0HVAR	equ 0x05;variabele voor de tmr0 high bit
 STARTSONG	equ 0x04;variable which is 1 if we want to start the music
 ;***********************************************************
 ; Program Code Starts Here
@@ -56,6 +57,7 @@ START
     movlw   0x01	; Value used to initialize data direction
     movwf   TRISC	; Set RC0 as input
     bcf	    STARTSONG,0 ; clear the start song bit
+    clrf    TMR0HVAR;clear tmr0 var
     
     
 
@@ -177,6 +179,29 @@ init_lut
     movff   0x29,0x33;F
     movff   0x30,0x34;G
     movff   0x31,0x35;Silence
+    movlw   D'11' ;g
+    movwf   0x36    ;gh
+    movwf   D'12'
+    movwf   0x37    ;ah
+    movff   0x36,0x38 ;gh
+    movlw   D'10'
+    movwf   0x39    ;fh
+    movlw   D'3'
+    movwf   0x40 ;e
+    movff   0x27,0x41 ;c
+    movff   0x36,0x42;gh
+    movff   0x37,0x43;ah
+    movff   0x42,0x44;gh
+    movff   0x39,0x45;fh
+    movff   0x40,0x46;e
+    movff   0x41,0x47;c
+    movff   0x47,0x48;c
+    movff   0x34,0x49;g
+    movff   0x35,0x50;c
+    movff   0x31,0x51;sil
+    movff 0x50,0x53;c
+    movff   0x34,0x54;g
+    movff   0x50,0x55;c
 	
     
     
@@ -203,6 +228,7 @@ schrijf_op_dac
     bcf	    PIR1,TMR1IF;clear de timer1 bit nog
     return
 ih_tmr1
+    movff   TMR0HVAR,TMR0H;initialize de timer 0 met de variabele
     bcf	    PIR1,TMR1IF;clear de timer1 bit nog
     ;als de song bit hoog is -> skip
     btfss   STARTSONG,0
@@ -235,11 +261,14 @@ ih_tmr0
 loop_table_read
     tblrd*+;skip een noot
     tblrd*+
+    tblrd*+
     decfsz  WREG,0;we gaan naar beneden tot we genoeg noten hebben geskipped
     goto loop_table_read
     goto read_from_table
 
-read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan
+read_from_table;we zitten aan de juiste noot, lees deze uit en pas tmr1 aan\
+    tblrd*+
+    movff   TABLAT,TMR0HVAR;
     tblrd*+;  lees de waardes op de plaats van de noot
     movff   TABLAT,TMR1HVAR;zet de waarde van de lat de high bit van tmr1
     tblrd*+; lees de high bit
@@ -255,14 +284,21 @@ inter_low
 ; table
 ;***********************************************************
     
-NOTES ;TMR1H TM1L
-    DB 0x00, 0x00   ;Silence?
+NOTES ;TMR0H TMR1H TM1L
+    DB  0x00, 0x00   ;Silence?
     ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
-    DB 0x30, 0xEE   ;C = do (65518) zou 1046,5 Hz moeten zijn
-    DB 0x60, 0xF0   ;D 1174,66 Hz
-    DB 0x80, 0xF8   ;E 1318,51 Hz
-    DB 0xA0, 0xFA   ;F 1396,91 Hz
-    DB 0xD0, 0xFF   ;G 1567,98 Hz
-    DB 0xFF, 0xDE   ;A 1760 Hz
+    DB 0xFF, 0x00   ;C = do (65518) zou 1046,5 Hz moeten zijn
+    DB 0xFF, 0xA0   ;D 1174,66 Hz
+    DB 0xFF, 0x00   ;E 1318,51 Hz
+    DB 0xFF, 0xA0   ;F 1396,91 Hz
+    DB 0xFF, 0x00   ;G 1567,98 Hz
+    DB 0xFF, 0xA0   ;A 1760 Hz
+    ;halve noten
+    DB 0x80, 0xFF, 0xEE   ;C = do	7
+    DB 0x80, 0xFF, 0xF0   ;D 1174,66 Hz	8
+    DB 0x80, 0x80, 0xF8   ;E 1318,51 Hz	9
+    DB 0x80, 0xA0, 0xFA   ;F 1396,91 Hz	10
+    DB 0x80, 0xD0, 0xFF   ;G 1567,98 Hz	11
+    DB 0x80, 0xFF, 0xDE   ;A 1760 Hz	12
     
     END
