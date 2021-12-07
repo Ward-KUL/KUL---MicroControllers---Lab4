@@ -265,4 +265,22 @@ NOTES ;TMR1H TM1L
     DB 0xD0, 0xFF   ;G 1567,98 Hz
     DB 0xFF, 0xDE   ;A 1760 Hz
     
+    ;STER ASSIGNMENT
+;    NOTES ;TMR0H TMR1H TM1L
+;    DB  0x00, 0x00, 0x00   ;Silence?
+;    ;calculate the correct values WAARDES KLOPPEN NOG NIET, gewoon willekeurig voor te testen
+;    DB 0x00,0xFF, 0x00   ;C = do (65518) zou 1046,5 Hz moeten zijn
+;    DB 0x00,0xFF, 0xA0   ;D 1174,66 Hz
+;    DB 0x00,0xFF, 0x00   ;E 1318,51 Hz
+;    DB 0x00,0xFF, 0xA0   ;F 1396,91 Hz
+;    DB 0x00,0xFF, 0x00   ;G 1567,98 Hz
+;    DB 0x00,0xFF, 0xA0   ;A 1760 Hz
+;    ;halve noten
+;    DB 0x80, 0xFF, 0xEE   ;C = do	7
+;    DB 0x80, 0xFF, 0xF0   ;D 1174,66 Hz	8
+;    DB 0x80, 0x80, 0xF8   ;E 1318,51 Hz	9
+;    DB 0x80, 0xA0, 0xFA   ;F 1396,91 Hz	10
+;    DB 0x80, 0xD0, 0xFF   ;G 1567,98 Hz	11
+;    DB 0x80, 0xFF, 0xDE   ;A 1760 Hz	12
+    
     END
